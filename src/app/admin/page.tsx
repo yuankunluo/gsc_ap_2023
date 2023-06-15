@@ -1,44 +1,111 @@
 'use client'
 
-import { useState, useTransition } from "react"
-import { handleUpload } from "./handler";
-
+import { useRef, useState, useTransition } from "react"
+import { UploadData, handleUpload } from "./handler";
+import Papa from 'papaparse';
+import { Message } from 'primereact/message';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { Password } from 'primereact/password';
 
 export default function AdminPage(){
 
     const [password, setPassword] = useState('')
-    const [uploadFile, setUploadFile] = useState('')
+    const [uploadData, setUploadData] = useState([])
+    const [error, setError] = useState('')
     let [isPending, startTransition] = useTransition();
 
+    const toast = useRef(null);
+
     const upload = () => {
-        console.log(password)
-        console.log(uploadFile)
-        startTransition(() => {
-           handleUpload(uploadFile, password)
+        
+        
+
+        // if (!founded){
+        //     setError(`Required fileds not found, required: ${requiredFileds}`)
+        //     return
+        // }
+
+        // if (errors.length > 0){
+        //     setError(`Parser Errors: ${errors}`)
+        //     return
+        // }
+        
+        // startTransition(() => {
+        //    handleUpload(data, password)
+        // })
+    }
+
+
+    const parseCsv = (csv: string) => {
+        const {data, errors, meta} = Papa.parse<UploadData>(csv, {
+            header: true,
         })
+
+        const requiredFileds = ['code','seat']
+
+        const founded = requiredFileds.map((f) => meta.fields?.includes(f)).reduce((a,b) => a && b, true)
+
+        if (!founded){
+            setError("required filed missing")
+            return
+        }
+
+        console.log(data)
+
     }
         
-    return (
-        <div className="grid">
-           <form onSubmit={(e) => e.preventDefault()}>
 
-                <input type="file" name="upload_file" onChange={(v) => {
-                    if (v.target.files){
-                        let f = v.target.files[0]
-                        f.text().then(data => 
-                            setUploadFile(data)
+    const reset = () => {
+        setError('')
+        setPassword('')
+    }
+
+
+
+    return (
+        <div className="grid grid-cols-1 gap-6">
+
+
+            <span className="p-float-label">
+                <InputText aria-label="Choose File" id="upload_input" type="file" name="upload_file"
+                    onChange={(e) => {
+                        
+                        if (e.target.files && e.target.files.length > 0){
+                            const file = e.target.files[0]
+                            file.text().then(
+                                csv =>parseCsv(csv)
                             ).catch(error => {
                                 console.error(error)
                             })
-                    } else {
-                        setUploadFile('')
-                    }
-                }} />
+                        }
+                    }}
+                />
+            </span>
 
-                <input type="password" name="password" onChange={(v) => setPassword(v.target.value)}/>
+            <span className="p-float-label">
+                <InputText aria-label="Password" id="password" type="password" name="password" placeholder="Password" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)}
+                    />
+                <label htmlFor="password">Password</label>
+            </span>
+            
+
+            <Button onClick={(e) => upload()}>Upload</Button>
+
+            <Button severity="info" onClick={(e) => reset()}>Reset</Button>
+           
+
+        
+
+            {error? 
+
+                <Message  text={error} severity="error"/>
+                :
+                <br/>
+                }
                 
-                <button disabled={password === '' || uploadFile === ''} onClick={(e) => upload()}>Upload</button>
-           </form>
         </div>  
     )
 }
