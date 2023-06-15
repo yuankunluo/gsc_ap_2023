@@ -3,7 +3,7 @@ import Footer from './component/footer'
 import { Header } from './component/header'
 import './globals.css'
 import { Inter } from 'next/font/google'
-import Error from './error'
+import Error from './check-in/[code]/error'
 
 const inter = Inter({ subsets: ['latin'] })
 
