@@ -5,16 +5,18 @@ import { useState } from 'react';
 import { Button } from 'primereact/button';
 import { Chip } from 'primereact/chip';
 import CheckInCode from '../component/checkInCode';
+import { useRouter } from 'next/navigation';
+
 
 
 export default function CheckInPage(){
 
     const [value, setValue] = useState("")
     const [visible, setVisible] = useState(false)
+    const router = useRouter()
 
     const goSignIn = (value: string) => {
-        setValue(value)
-        console.log(value);
+        router.push(`/check-in/${value}`)
     }
 
     const toggle = () => {
@@ -32,7 +34,7 @@ export default function CheckInPage(){
             <InputText placeholder="输入你的入场码" value={value} onChange={(e) => {
                 setValue(e.target.value);
             }} />
-            <Button disabled={value === ""} severity="info">签到</Button>
+            <Button disabled={value === ""} onClick={(e) => goSignIn(value)} severity="info">签到</Button>
         </div>
     )
 }

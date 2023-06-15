@@ -1,7 +1,9 @@
+import { Suspense } from 'react'
 import Footer from './component/footer'
 import { Header } from './component/header'
 import './globals.css'
 import { Inter } from 'next/font/google'
+import Error from './error'
 
 const inter = Inter({ subsets: ['latin'] })
 
