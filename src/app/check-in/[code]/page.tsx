@@ -1,5 +1,5 @@
-import { UploadData } from "@/app/admin/handler"
-import sql, { peopleCheckInTable } from "@/lib/db"
+import { CheckInData } from "@/app/admin/handler"
+import sql, { checkInTabble } from "@/lib/db"
 import TableCard from "./tableCard"
 import NoCode from "./notCode"
 import { getNowTs } from "@/utils"
@@ -9,8 +9,8 @@ import { getNowTs } from "@/utils"
 async function checkIn(code: string){
 
     try {
-        const record = await sql<UploadData[]>`
-            SELECT * FROM ${sql(peopleCheckInTable)}
+        const record = await sql<CheckInData[]>`
+            SELECT * FROM ${sql(checkInTabble)}
             WHERE code = ${ code }
         `
         console.debug("found", record)
@@ -21,12 +21,12 @@ async function checkIn(code: string){
             if (!record[0].check_in){
                 // Found and CheckIn
                 await sql`
-                UPDATE ${sql(peopleCheckInTable)} 
+                UPDATE ${sql(checkInTabble)} 
                 SET check_in = timezone('utc'::text, now())
                 WHERE code = ${ code } 
                 `
-                const result = await sql<UploadData[]>`
-                SELECT * FROM ${sql(peopleCheckInTable)}
+                const result = await sql<CheckInData[]>`
+                SELECT * FROM ${sql(checkInTabble)}
                 WHERE code = ${ code }
                 `
                 

@@ -1,12 +1,12 @@
 'use client'
 
-import { UploadData } from "@/app/admin/handler";
+import { CheckInData } from "@/app/admin/handler";
 import { Card } from 'primereact/card';
 import { Button } from "primereact/button";
 import { useRouter } from "next/navigation";
 import { convertToDateString } from "@/utils";
 
-export default function TableCard(props: {data: UploadData}) {
+export default function TableCard(props: {data: CheckInData}) {
 
     
     const router = useRouter();

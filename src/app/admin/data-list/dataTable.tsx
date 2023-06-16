@@ -1,7 +1,7 @@
 'use client'
 
 import { Column } from "primereact/column";
-import { UploadData } from "../handler";
+import { CheckInData } from "../handler";
 import { DataTable } from 'primereact/datatable';
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
@@ -10,7 +10,7 @@ import { InputText } from "primereact/inputtext";
 import moment from "moment";
 import { convertToDateString } from "@/utils";
 
-export function DataTableComp(props: {data: UploadData[]}){
+export function DataTableComp(props: {data: CheckInData[]}){
 
     const DATE_FORMAT= "YYYY-MM-DD HH:mm:ss"
 
@@ -20,7 +20,7 @@ export function DataTableComp(props: {data: UploadData[]}){
 
     const [globalFilterValue1, setGlobalFilterValue1] = useState('');
 
-    const dateTemplate = (rowData:UploadData)=>{
+    const dateTemplate = (rowData:CheckInData)=>{
         return <p>rowData.name</p>
     }
 
@@ -66,23 +66,25 @@ export function DataTableComp(props: {data: UploadData[]}){
                 showGridlines
                 scrollHeight="flex" 
                 virtualScrollerOptions={{ itemSize: 100 }}
-                dataKey="code"
+                dataKey="id"
                 globalFilterFields={['code', 'table', 'name']}
                 globalFilterMatchMode="contains"
                 globalFilter={globalFilterValue1}
                 header={header1} emptyMessage="No Record found."
                 >
+                <Column field="id" header="ID" sortable filter ></Column>
                 <Column field="code" header="Code" sortable filter ></Column>
                 <Column field="table_nr" header="Table Nr" sortable filter></Column>
                 <Column field="check_in"
                     sortable
-                    body={(rowData: UploadData)=>convertToDateString(rowData.check_in)
+                    body={(rowData: CheckInData)=>convertToDateString(rowData.check_in)
                         
-                } header="Created In"></Column>
+                } header="Check In"></Column>
                 <Column field="name" header="Name"></Column>
-                <Column field="inserted_at" body={(rowData: UploadData)=>{
+                <Column field="history" header="Hisotry"></Column>
+                {/* <Column field="inserted_at" body={(rowData: UploadData)=>{
                     return <>{convertToDateString(rowData.inserted_at)}</>
-                }} header="Created In"></Column>
+                }} header="Created"></Column> */}
             </DataTable>
         </div>
     )
