@@ -39,6 +39,7 @@ export default function Upload(){
         const {data, errors, meta} = Papa.parse<UploadData>(csv, {
             header: true,
             skipEmptyLines: true,
+            transformHeader: (value) => value.toLocaleLowerCase(),
             transform: (value) => value.toLocaleLowerCase()
         })
 

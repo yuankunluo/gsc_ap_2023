@@ -17,7 +17,7 @@ export default function TableCard(props: {data: UploadData}) {
     );
 
     const footer = <div>
-        {/* <Button onClick={()=>router.back()}>返回</Button> */}
+        <Button onClick={()=>router.back()}>返回</Button>
     </div>
 
     
