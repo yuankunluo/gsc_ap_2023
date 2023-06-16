@@ -3,7 +3,6 @@
 import { useRef, useState, useTransition } from "react"
 import { UploadData, handleUpload } from "./handler";
 import Papa from 'papaparse';
-import { Message } from 'primereact/message';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';

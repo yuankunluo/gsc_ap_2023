@@ -1,20 +1,22 @@
 'use client'
 
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Accordion, AccordionTab } from 'primereact/accordion';
-import { Button } from "primereact/button";
 import { useState } from 'react';
+import CheckInList from './checkInList';
+import { Button } from 'primereact/button';
+import { useRouter } from 'next/navigation';
+
 
 export default function AdminPage(){
 
-
+    const router = useRouter()
     const [activeIndex, setActiveIndex] = useState<number|number[]>()
-    const router = useRouter();
 
-
-    const goToUpload = ()=>{
-        router.push('/admin/upload')
+    const goToList = ()=>{
+        router.push("/admin/upload")
     }
+   
 
     return (
         <div className="w-full grid grid-cols-1 gap-4">
@@ -22,10 +24,10 @@ export default function AdminPage(){
             <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                 <AccordionTab header="Upload File">
                     <p>This action will DELETE ALL old record!</p>
-                    <Button onClick={() =>  goToUpload()}>Go ToUpload</Button>
+                    <Button security='info' onClick={()=>goToList()}>Go To Upload</Button>
                 </AccordionTab>
-                <AccordionTab header="Header II">
-                    Content II
+                <AccordionTab header="Checkin List">
+                    <CheckInList />
                 </AccordionTab>
                 <AccordionTab header="Header III">
                     Content III
