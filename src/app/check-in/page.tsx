@@ -34,7 +34,8 @@ export default function CheckInPage(){
             <InputText placeholder="输入你的入场码" value={value} onChange={(e) => {
                 setValue(e.target.value);
             }} />
-            <Button disabled={value === ""} onClick={(e) => goSignIn(value)} severity="info">签到</Button>
+            <Button severity='success' disabled={value === ""} onClick={(e) => goSignIn(value)}>签到</Button>
+            <Button onClick={(e) => {router.back()}} severity="info">返回</Button>
         </div>
     )
 }

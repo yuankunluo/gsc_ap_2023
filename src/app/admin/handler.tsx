@@ -1,6 +1,6 @@
 'use server'
 
-import sql from "@/lib/db"
+import sql, { peopleCheckInTable } from "@/lib/db"
 import { PostgresError } from "postgres"
 
 export interface UploadData {
@@ -12,7 +12,6 @@ export interface UploadData {
     inserted_at?: string
 }
 
-const peopleCheckInTable = `${process.env.DB_TABLE_PREFIX}_people_check_in`
 
 export async function create_tables(){
 
@@ -29,12 +28,13 @@ export async function create_tables(){
                 const data_table = await sql`CREATE TABLE ${sql(peopleCheckInTable)} (
                     code TEXT NOT NULL PRIMARY KEY,
                     table_nr TEXT NOT NULL,
-                    inserted_at timestamp with time zone default timezone('utc'::text, now()) not null,
+                    inserted_at TIMESTAMP with time zone default timezone('utc'::text, now()) NOT NULL,
                     seat_nr TEXT,
                     name TEXT,
-                    check_in TIMESTAMP
+                    check_in TIMESTAMP with time zone default timezone('utc'::text, null)
                 )
                 `
+                console.debug("created: ", data_table)
             }
             else {
                 throw error
@@ -48,7 +48,6 @@ export async function create_tables(){
 
 
 async function insertData(data: UploadData[]){
-
 
     const result = await sql`
         INSERT INTO ${sql(peopleCheckInTable)} ${sql(data)}

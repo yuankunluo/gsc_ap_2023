@@ -8,6 +8,7 @@ import { Button } from "primereact/button";
 import { useState } from "react";
 import { InputText } from "primereact/inputtext";
 import moment from "moment";
+import { convertToDateString } from "@/utils";
 
 export function DataTableComp(props: {data: UploadData[]}){
 
@@ -75,16 +76,12 @@ export function DataTableComp(props: {data: UploadData[]}){
                 <Column field="table_nr" header="Table Nr" sortable filter></Column>
                 <Column field="check_in"
                     sortable
-                    body={(rowData: UploadData)=>{
-                        if (rowData.check_in){
-                            return <>{moment(rowData.check_in).format(DATE_FORMAT)}</>
-                        } else {
-                            return ''
-                        }
-                }} header="Created In"></Column>
+                    body={(rowData: UploadData)=>convertToDateString(rowData.check_in)
+                        
+                } header="Created In"></Column>
                 <Column field="name" header="Name"></Column>
                 <Column field="inserted_at" body={(rowData: UploadData)=>{
-                    return <>{moment(rowData.inserted_at).format(DATE_FORMAT)}</>
+                    return <>{convertToDateString(rowData.inserted_at)}</>
                 }} header="Created In"></Column>
             </DataTable>
         </div>
