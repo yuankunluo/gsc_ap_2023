@@ -23,7 +23,7 @@ interface UploadFormData {
 export default function Upload(){
 
 
-    const { control, formState: { errors }, handleSubmit, reset } = useForm<UploadFormData>();
+    const { register, control, formState: { errors }, handleSubmit, reset } = useForm<UploadFormData>();
 
 
 
@@ -187,7 +187,7 @@ export default function Upload(){
     return (
         <Card title="Upload File" 
             subTitle="A CSV file containing: code, table_nr, optional: name, seat_nr"
-            footer={bottom}
+            // footer={bottom}
             >
 
             <Toast ref={toast} />
@@ -201,36 +201,45 @@ export default function Upload(){
                 <form onSubmit={handleSubmit(onSubmit)} >
                     <div className="grid grid-cols-1 gap-6">
                         
-
-
-                        <Controller name="password" 
-                            control={control} 
-                            rules={{ required: 'File is required.' }} 
-                            render={({ field, fieldState }) => (
-                                    <InputText type="passport"  id={field.name} {...field}/>
-                                )} />
-
                         <Controller name="dataType" 
                             control={control} 
-                            rules={{ required: 'File is required.' }} 
                             render={({ field, fieldState }) => (
                                 <SelectButton id={field.name} {...field} options={['CheckIn' , 'PartyCode']} />
                                 )} />
 
+                        <Controller name="password" 
+                            control={control} 
+                            render={({ field, fieldState }) => (
+                                    <div className="p-inputgroup">
+                                    <span className="p-inputgroup-addon">
+                                        <i className="pi pi-user"></i>
+                                    </span>
+                                    <InputText placeholder="Password" type="passport"  id={field.name} {...field}/>
+                                    </div>
+                                )} />
 
-                        {/* <InputText 
-                            aria-label="Choose File" 
-                            accept="text/csv"
-                            multiple={false}
-                            id="upload_input" type="file" name="upload_file"
-                            onChange={(e) => setFileText(e.target.value)}
-                        /> */}
-
-                        {/* <InputText aria-label="Password" id="password" type="password" name="password" placeholder="Password" 
-                            value={password} 
-                            onChange={(e) => setPassword(e.target.value)}
-                        /> */}
-
+                        
+                                <Controller
+                                    control={control}
+                                    name="uploadFile"
+                                    rules={{ required: "Recipe picture is required" }}
+                                    render={({ field: { value, onChange, ...field } }) => {
+                                    return (
+                                        <InputText
+                                        aria-label="Choose File" 
+                                        accept="text/csv"
+                                        multiple={false}
+                                        {...field}
+                                        onChange={(event) => {
+                                            onChange(event.target.files? event.target.files[0] : null);
+                                        }}
+                                        type="file"
+                                        id="picture"
+                                        />
+                                    );
+                                    }}
+                                />
+                    
                         <Button type="submit" label="Upload" severity="success"></Button>
                     </div>
                 </form>
