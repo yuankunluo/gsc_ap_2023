@@ -7,51 +7,63 @@ import { Message } from 'primereact/message';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
+import { stringify } from "querystring";
 
 export default function AdminPage(){
 
     const [password, setPassword] = useState('')
-    const [uploadData, setUploadData] = useState([])
+    const [uploadData, setUploadData] = useState<UploadData[]>([])
     const [error, setError] = useState('')
     let [isPending, startTransition] = useTransition();
 
     const toast = useRef(null);
 
     const upload = () => {
-        
-        
-
-        // if (!founded){
-        //     setError(`Required fileds not found, required: ${requiredFileds}`)
-        //     return
-        // }
-
-        // if (errors.length > 0){
-        //     setError(`Parser Errors: ${errors}`)
-        //     return
-        // }
-        
-        // startTransition(() => {
-        //    handleUpload(data, password)
-        // })
+         
+        startTransition(() => {
+           handleUpload(uploadData, password)
+        }
+        )
     }
 
 
     const parseCsv = (csv: string) => {
         const {data, errors, meta} = Papa.parse<UploadData>(csv, {
             header: true,
+            skipEmptyLines: true,
+            transform: (value) => value.toLocaleLowerCase()
         })
 
-        const requiredFileds = ['code','seat']
+        console.log(data, error, meta)
+
+        const requiredFileds = ['code','table_nr']
 
         const founded = requiredFileds.map((f) => meta.fields?.includes(f)).reduce((a,b) => a && b, true)
 
         if (!founded){
             setError("required filed missing")
+            setUploadData([])
             return
         }
 
-        console.log(data)
+        if (error.length > 0){
+            setError(`${JSON.stringify(errors)}`)
+            setUploadData([])
+        } else {
+            setError('')
+        }
+
+        // check duplication
+        const codeList = data.map(d => d.code)
+        const codeSet = new Set(codeList)
+
+        if (codeList.length != codeSet.size){
+            setError('Found duplicated code')
+            setUploadData([])
+            return
+        }
+
+        setUploadData(data);
 
     }
         
@@ -59,6 +71,8 @@ export default function AdminPage(){
     const reset = () => {
         setError('')
         setPassword('')
+        setUploadData([])
+
     }
 
 
@@ -78,6 +92,8 @@ export default function AdminPage(){
                             ).catch(error => {
                                 console.error(error)
                             })
+                        } else {
+                            setUploadData([])
                         }
                     }}
                 />
@@ -92,9 +108,9 @@ export default function AdminPage(){
             </span>
             
 
-            <Button onClick={(e) => upload()}>Upload</Button>
+            <Button severity="danger" disabled={uploadData.length == 0 || password.length == 0} onClick={(e) => upload()}>Upload, Erase old data!!</Button>
 
-            <Button severity="info" onClick={(e) => reset()}>Reset</Button>
+            <Button severity="warning" onClick={(e) => reset()}>Reset</Button>
            
 
         

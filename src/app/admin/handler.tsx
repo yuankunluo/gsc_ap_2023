@@ -1,23 +1,92 @@
 'use server'
 
 import sql from "@/lib/db"
+import { PostgresError } from "postgres"
 
 export interface UploadData {
     code: string
-    name: string
-    table: string
-    seat?: string
+    table_nr: string
+    seat_nr?: string
+    name?: string
 }
 
+const peopleCheckInTable = `${process.env.DB_TABLE_PREFIX}_people_check_in`
+
+export async function create_tables(){
+
+
+    try {
+        // DELETE ALL RESULT
+        const deleted = await sql`DELETE FROM ${sql(peopleCheckInTable)} WHERE code != ''`;
+        console.debug("deleted", deleted)
+    } catch (error){
+        if (error instanceof PostgresError){
+            if (error.message.includes('does not exist')){
+                console.debug("create table", peopleCheckInTable)
+                // CREATE TABLE
+                const data_table = await sql`CREATE TABLE ${sql(peopleCheckInTable)} (
+                    code TEXT NOT NULL PRIMARY KEY,
+                    table_nr TEXT NOT NULL,
+                    seat_nr TEXT,
+                    name TEXT,
+                    check_in TIMESTAMP
+                )
+                `
+            }
+            else {
+                throw error
+            }
+        } else {
+            throw error
+        }
+    }
+}
+
+
+
+async function insertData(data: UploadData[]){
+    // const result: InsertResult = {
+    //     inputRows: data.length,
+    //     succeedRow: 0,
+    //     errors: []
+    // }
+
+    const result = await sql`
+        INSERT INTO ${sql(peopleCheckInTable)} ${sql(data)}
+    `
+
+    // for (let i=0; i< data.length; i++){
+    //     try {
+    //         await sql`
+    //             INSERT INTO ${sql(peopleCheckInTable)} (table_nr, code) values 
+    //             (${data[i].table}, ${data[i].code})
+    //         `
+    //         result.succeedRow += 1
+    //     } catch(error){
+    //         if (error instanceof PostgresError){
+    //             result.errors.push(error.message)
+    //         }
+    //         console.error(error)
+    //     }
+    // }
+    return result
+}
+
+
 export async function handleUpload(data: UploadData[], password:string){
-    console.log(password)
+    console.debug('password', password)
     // console.log(data)
 
-    const db_data = await sql`SELECT * FROM check_in_list`;
+    const masterPassword = `${process.env.MASTER_PASSWORD}`
 
-    console.log(db_data);
-    
-    return {
-        "message":"ok"
+    if (password !== masterPassword){
+        throw new Error("Password invalid")
     }
+
+    await create_tables()
+
+    const insertResult = await insertData(data)
+
+    console.log(insertResult)
+    
 }
