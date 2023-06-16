@@ -27,6 +27,7 @@ export async function create_tables(){
                 const data_table = await sql`CREATE TABLE ${sql(peopleCheckInTable)} (
                     code TEXT NOT NULL PRIMARY KEY,
                     table_nr TEXT NOT NULL,
+                    inserted_at timestamp with time zone default timezone('utc'::text, now()) not null,
                     seat_nr TEXT,
                     name TEXT,
                     check_in TIMESTAMP
@@ -45,11 +46,7 @@ export async function create_tables(){
 
 
 async function insertData(data: UploadData[]){
-    // const result: InsertResult = {
-    //     inputRows: data.length,
-    //     succeedRow: 0,
-    //     errors: []
-    // }
+
 
     const result = await sql`
         INSERT INTO ${sql(peopleCheckInTable)} ${sql(data)}
@@ -89,4 +86,11 @@ export async function handleUpload(data: UploadData[], password:string){
 
     console.log(insertResult)
     
+}
+
+
+export async function getAllData(){
+    const data = await sql<UploadData[]>`SELECT * FROM ${sql(peopleCheckInTable)}`
+
+    return data
 }
