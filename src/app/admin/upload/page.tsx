@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState, useTransition } from "react"
-import { UploadData, handleUpload } from "./handler";
+import { UploadData, handleUpload } from "../handler";
 import Papa from 'papaparse';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -100,7 +100,7 @@ export default function Upload(){
                 <Button severity="info" onClick={(e) => {
                     reset();
                     router.back()
-                    }}>Cancel</Button>
+                    }}>Back</Button>
             </div>
 
 

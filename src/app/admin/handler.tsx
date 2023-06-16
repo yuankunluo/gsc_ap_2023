@@ -8,6 +8,8 @@ export interface UploadData {
     table_nr: string
     seat_nr?: string
     name?: string
+    check_in?: string
+    inserted_at?: string
 }
 
 const peopleCheckInTable = `${process.env.DB_TABLE_PREFIX}_people_check_in`
