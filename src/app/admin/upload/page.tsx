@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { Toast } from 'primereact/toast';
 import { SelectButton } from 'primereact/selectbutton';
 import { useForm , Controller} from "react-hook-form";
+import { Message } from 'primereact/message';
 
 
 interface UploadFormData {
@@ -22,38 +23,113 @@ interface UploadFormData {
 
 export default function Upload(){
 
-
+    const [dataErrors, setDataErrors] = useState<string[]>([])
     const { register, control, formState: { errors, isValid }, handleSubmit, reset } = useForm<UploadFormData>();
 
 
-    const [checkInData, setCheckInData] = useState<CheckInData[]>([])
-    const [partCodeData, setPartCodeData] = useState<PartyCodeData[]>([])
     let [isUploadPending, startUploadTransition] = useTransition();
     const router = useRouter();
 
     const toast = useRef<Toast>(null);
 
-    // const upload = () => {
-         
-    //     startUploadTransition(() => {
 
-    //             if (dataType == 'CheckIn'){
-    //                 handleUploadCheckIn(checkInData, password);
-    //             } else {
-    //                 handleUploadPartyCode(partCodeData, password)
-    //             }
-                
-    //             toast.current?.show({
-    //                 severity:'success',
-    //                 detail: 'Upload Successfully'
-    //             })
-    //             reset()
-    //         }
-    //     )
-    // }
+   const uploadPartyCodeData = (csv: string, password: string) => {
+
+        const parseErrors : string[] = []
+
+        let {data, errors, meta} = Papa.parse<PartyCodeData>(csv, {
+            header: true,
+            skipEmptyLines: true,
+            transformHeader: (value) => value.toLocaleLowerCase(),
+            transform: (value) => value.toLocaleLowerCase(),
+            delimitersToGuess: [',','\t','\n']
+        })
+
+        console.log('parse PartyCode', data.length)
+
+        console.debug(data, errors, meta)
+
+        if (meta.fields && !meta.fields.includes('code')){
+            parseErrors.push("Filed missing: code")
+        }
+
+        if (errors.length != 0){
+            errors.forEach(e => parseErrors.push(e.message))
+        }
+
+        const codeList = data.map(d => d.code)
+        const codeSet = new Set(codeList)
+
+        if (codeList.length != codeSet.size){
+            parseErrors.push('Found duplicated code')
+        }
+
+        if (parseErrors.length != 0){
+            setDataErrors(parseErrors)
+            return
+        }
+
+        startUploadTransition(() => {
+            handleUploadPartyCode(data, password);
+            
+            toast.current?.show({
+                severity:'success',
+                detail: 'Upload Successfully'
+            })
+            setDataErrors([])
+        })
+    }
+
+   const uploadChekInData = (csv: string, password: string) => {
+
+        const parseErrors : string[] = []
+        const {data, errors, meta} = Papa.parse<CheckInData>(csv, {
+            header: true,
+            skipEmptyLines: true,
+            transformHeader: (value) => value.toLocaleLowerCase(),
+            transform: (value) => value.toLocaleLowerCase()
+        })
+
+        console.log('parse CheckInData', data.length)
 
 
-   
+        const requiredFileds = ['code','table_nr']
+
+        const founded = requiredFileds.map((f) => meta.fields?.includes(f)).reduce((a,b) => a && b, true)
+
+        if (!founded){
+            parseErrors.push("required filed missing: code, table_nr")
+        }
+
+        if (errors.length > 0){
+            errors.forEach(e => parseErrors.push(e.message))
+        } 
+
+        // check duplication
+        const codeList = data.map(d => d.code)
+        const codeSet = new Set(codeList)
+
+        if (codeList.length != codeSet.size){
+            parseErrors.push('Found duplicated code')
+        }
+
+        if (parseErrors.length != 0){
+            setDataErrors(parseErrors)
+            return
+        }
+        
+        startUploadTransition(() => {
+            
+            handleUploadCheckIn(data, password);
+            
+            toast.current?.show({
+                severity:'success',
+                detail: 'Upload Successfully'
+            })
+            setDataErrors([])
+        })
+    
+   }
         
         
 
@@ -65,6 +141,18 @@ export default function Upload(){
 
     const onSubmit = (data: UploadFormData) => {
         console.log(data)
+
+        data.uploadFile.text().then(
+            text => {
+                if (data.dataType == 'CheckIn'){
+                    uploadChekInData(text, data.password)
+                } else {
+                    uploadPartyCodeData(text, data.password)
+                }
+            }
+        ).catch((errror) => {
+            console.error(errror)
+        })
     }; 
 
     return (
@@ -139,6 +227,8 @@ export default function Upload(){
                             );
                             }}
                         />
+
+                        { dataErrors.length != 0 && <Message severity="error" text={JSON.stringify(dataErrors)}/> }
                     
                         <Button disabled={!isValid} type="submit" label="Upload" severity="success"></Button>
                         <Button onClick={()=>router.back()} label="Cancel" severity="info"></Button>

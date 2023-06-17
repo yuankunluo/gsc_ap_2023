@@ -99,11 +99,14 @@ async function insertCheckInData(checkInData: CheckInData[]){
 
 async function insertPartyCodeData(partyCodeData: PartyCodeData[]){
 
+    const cleanData: PartyCodeData[] = partyCodeData.map(d => ({
+        code: d.code
+    })) 
     try {
        
 
         const insertPartyCode =  await sql`
-        INSERT INTO ${sql(partyCodeTable)} ${sql(partyCodeData)}
+        INSERT INTO ${sql(partyCodeTable)} ${sql(cleanData)}
         `
     
         return {"ok":200}
