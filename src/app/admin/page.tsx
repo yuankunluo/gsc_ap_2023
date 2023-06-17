@@ -26,6 +26,7 @@ export default function AdminPage(){
                 <div className='grid gird-cols-1 gap-4'>
                     <Button security='info' onClick={()=>goToList("upload")} label='上传文件' />
                     <Button security='info' onClick={()=>goToList("data-list")} label='查阅签到记录' />
+                    <Button security='info' onClick={()=>goToList("generate-check-in-code")} label='生成签到二维码' />
                 </div>
                 
             </Card>

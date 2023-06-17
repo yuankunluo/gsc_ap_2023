@@ -1,7 +1,6 @@
 'use client'
 
 import { InputText } from 'primereact/inputtext';
-import { useState } from 'react';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import { Chip } from 'primereact/chip';
@@ -9,10 +8,10 @@ import { ConfirmDialog } from 'primereact/confirmdialog'; // To use <ConfirmDial
 import { confirmDialog } from 'primereact/confirmdialog'; 
 import { useForm, Controller , SubmitHandler} from 'react-hook-form';
 import { Message } from 'primereact/message';
-import { invalid } from 'moment-timezone';
 
 interface MyCode {
-    myCode: string
+    myCode: string,
+    checkInCode: string
 }
 
 export default function CheckInPage(){
@@ -21,13 +20,25 @@ export default function CheckInPage(){
     const router = useRouter()
 
     const goSignIn = (myCode: MyCode) => {
-        router.push(`/check-in/${myCode.myCode}`)
+        // router.push(`/check-in/${myCode.myCode}`)
     }
 
     const openHelper = () => {
         confirmDialog({
-            message: `入场码是工会或者委员会通过内部邮件发送给你的一个与您的STAFF ID绑定的一串字符。`,
+            message: `【入场码】是工会或者委员会通过内部邮件发送给你的一个与您的STAFF ID绑定的一串字符。`,
             header: '入场码',
+            acceptLabel: "我了解了",
+            rejectLabel: "我拒绝",
+            rejectClassName: "no-show",
+            accept: () => {},
+            reject: () => {}
+        });
+    }
+
+    const openHelperCheckInCode = () => {
+        confirmDialog({
+            message: `【签到码】是年会现场入口公布的一组四位数字的密码，确保只有到场的人能签到。`,
+            header: '签到码',
             acceptLabel: "我了解了",
             rejectLabel: "我拒绝",
             rejectClassName: "no-show",
@@ -58,7 +69,11 @@ export default function CheckInPage(){
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 gap-4 p-4">
 
-                <h1>请输入你的<Chip label='入场码(?)' onClick={(e)=>{openHelper()}}/>，然后点击签到或者进行转让。</h1>
+                <h1>请输入你的
+                    <Chip label='入场码(?)' onClick={(e)=>{openHelper()}}/>
+                    和
+                    <Chip label='签到码(?)' onClick={(e)=>{openHelperCheckInCode()}}/>
+                    然后点击签。</h1>
 
                 <Controller 
                     name="myCode"
@@ -95,6 +110,48 @@ export default function CheckInPage(){
                                 {
                                     errors.myCode?.type === 'required' && 
                                     <Message severity="error" text="请输入你的入场码！" />
+                                }
+                                
+
+                            </div>
+                        )
+                    } />
+
+                <Controller 
+                    name="checkInCode"
+                    control={control}
+                    rules={{
+                        required: true, 
+                        pattern:{
+                            value: /^[0-9]{4,4}$/,
+                            message: "你的【签到码】是一个4位的数字, 请询问工作人员获取。 例如 【8081】"
+                        }
+                        
+                    }}
+                    render={
+                        ({ field , fieldState}) => (
+                            <div className='grid grid-cols-1 gap-4'>
+                                <div className="p-inputgroup">
+                                    <span className="p-inputgroup-addon">
+                                        <i className="pi pi-check-circle"></i>
+                                    </span>
+                                   
+                                    <InputText 
+                                        type="number"
+                                        required
+                                        placeholder="签到码" 
+                                        {...field}
+                                        />
+                                </div>
+                            
+                                {
+                                    errors.checkInCode?.type === 'pattern' && 
+                                    <Message severity="error" text={errors.checkInCode?.message} />
+                                }
+
+                                {
+                                    errors.checkInCode?.type === 'required' && 
+                                    <Message severity="error" text="请输签到码！" />
                                 }
                                 
 
