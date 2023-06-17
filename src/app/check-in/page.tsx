@@ -9,17 +9,18 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { useForm, Controller , SubmitHandler} from 'react-hook-form';
 import { Message } from 'primereact/message';
 
-interface MyCode {
+interface MyCheckInData {
     myCode: string,
     checkInCode: string
 }
 
 export default function CheckInPage(){
 
-    const {register, formState:{errors, isValid}, handleSubmit, control} = useForm<MyCode>()
+    const {register, formState:{errors, isValid}, handleSubmit, control} = useForm<MyCheckInData>()
     const router = useRouter()
 
-    const goSignIn = (myCode: MyCode) => {
+    const goSignIn = (myCode: MyCheckInData) => {
+        console.log(myCode)
         // router.push(`/check-in/${myCode.myCode}`)
     }
 
@@ -37,7 +38,7 @@ export default function CheckInPage(){
 
     const openHelperCheckInCode = () => {
         confirmDialog({
-            message: `【签到码】是年会现场入口公布的一组四位数字的密码，确保只有到场的人能签到。`,
+            message: `【签到码】是年会现场入口公布的一组四位数字和字母组合的随机，确保只有到场的人能签到。`,
             header: '签到码',
             acceptLabel: "我了解了",
             rejectLabel: "我拒绝",
@@ -48,7 +49,7 @@ export default function CheckInPage(){
     }
 
 
-    const confirmCheckIn = (myCode: MyCode) => {
+    const confirmCheckIn = (myCode: MyCheckInData) => {
         confirmDialog({
             message: '签到之后，你的坐席将被锁定，而且你也不能再进行转让。请您确认你会到场，并点击确定。如果你还不确定能出席，请点击取消',
             header: '你确定签到？',
@@ -59,7 +60,7 @@ export default function CheckInPage(){
         });
     }
 
-    const onSubmit: SubmitHandler<MyCode> = (data: MyCode) =>{
+    const onSubmit: SubmitHandler<MyCheckInData> = (data: MyCheckInData) =>{
         confirmCheckIn(data)
     }
 
@@ -123,8 +124,8 @@ export default function CheckInPage(){
                     rules={{
                         required: true, 
                         pattern:{
-                            value: /^[0-9]{4,4}$/,
-                            message: "你的【签到码】是一个4位的数字, 请询问工作人员获取。 例如 【8081】"
+                            value: /^[A-z|0-9]{4,4}$/,
+                            message: "你的【签到码】是一个4位的数字和字母的组合, 请询问工作人员获取。 例如 【8LTF】"
                         }
                         
                     }}
@@ -137,7 +138,7 @@ export default function CheckInPage(){
                                     </span>
                                    
                                     <InputText 
-                                        type="number"
+                                        type="text"
                                         required
                                         placeholder="签到码" 
                                         {...field}
