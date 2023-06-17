@@ -1,6 +1,6 @@
-import { CheckInData } from "@/app/admin/handler"
-import sql, { checkInTabble } from "@/lib/db"
-import { PARTY_CODE } from "@/lib/party_code"
+import { CheckInData, PartyCodeData } from "@/app/admin/handler"
+import sql, { checkInTabble, partyCodeTable } from "@/lib/db"
+import { SuccessCard } from "./successCard"
 
 
 
@@ -18,10 +18,18 @@ async function doSwitch(myCode: string, hisCode: string){
         console.debug("found mine", data)
 
         if (data.length == 0){
-            throw new Error("Can not find your seat")
+            throw new Error("抱歉，找不到你的坐席。")
         }
 
         const mine = data[0]
+
+        if (mine.check_in){
+            throw new Error("你已经签到了，无法进行坐席转让！")
+        }
+
+        if (mine.history){
+            throw new Error("此坐席已经转让过一次，无法进行坐席转让！")
+        }
 
         const hisData = await sql<CheckInData[]>`
         SELECT * FROM ${sql(checkInTabble)}
@@ -29,13 +37,20 @@ async function doSwitch(myCode: string, hisCode: string){
         `
 
         if (hisData.length != 0){
-            throw new Error("Your friend already has a seat!")
+            throw new Error("你的朋友已经有了坐席，不能再被转让!")
         }
 
-        if (!PARTY_CODE.includes(hisCode)){
-            throw new Error("Your friend's invitation code is not correct, please make sure your friend has a code!")
+        // Check his partycode
+        const hisPartyCode = await sql<PartyCodeData[]>`
+        SELECT * FROM ${sql(partyCodeTable)}
+        WHERE code = ${hisCode.toLocaleLowerCase()}
+        `
+
+        if (hisPartyCode.length == 0){
+            throw new Error("你朋友的入场码无效！请使用内部邮件发送的有效入场码")
         }
-        
+
+    
         if (!mine.history){
             mine.history = mine.code
         }
@@ -44,7 +59,7 @@ async function doSwitch(myCode: string, hisCode: string){
 
         const updated = await sql`
         UPDATE ${sql(checkInTabble)} 
-        SET code = ${hisCode}, history = ${ history }
+        SET code = ${hisCode}, history = ${ history }, update_at = timezone('utc'::text, now())
         WHERE id = ${ mine.id }  
         `
 
@@ -69,8 +84,7 @@ export default async function SwitchCodePage({params}:{
 }){
 
     const reuslt = await doSwitch(params.mycode, params.hiscode)
-    
-    return <p>
-        {params.mycode} = {params.hiscode}, {reuslt.history}
-    </p>
+   
+
+    return <SuccessCard data={reuslt}/>
 }

@@ -133,12 +133,6 @@ export default function Upload(){
         
         
 
-
-
-
-
-
-
     const onSubmit = (data: UploadFormData) => {
         console.log(data)
 
@@ -163,7 +157,7 @@ export default function Upload(){
 
             <Toast ref={toast} />
 
-            <div id="upload_file_area">
+            <div id="upload_file_area" className="grid grid-cols-1 gap-6">
                 { isUploadPending?
 
                 <ProgressSpinner /> :
@@ -231,13 +225,13 @@ export default function Upload(){
                         { dataErrors.length != 0 && <Message severity="error" text={JSON.stringify(dataErrors)}/> }
                     
                         <Button disabled={!isValid} type="submit" label="Upload" severity="success"></Button>
-                        <Button onClick={()=>router.back()} label="Cancel" severity="info"></Button>
+                        
                     </div>
                 </form>
                             
                 }
+                <Button onClick={()=>router.back()} label="Cancel" severity="info"></Button>
             </div>
-                    
         </Card>  
     )
 }

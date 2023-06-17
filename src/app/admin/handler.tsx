@@ -18,6 +18,7 @@ export interface CheckInData extends PartyCodeData{
     name?: string
     check_in?: string
     inserted_at?: string
+    update_at?: string
     history?: string
 }
 
@@ -68,7 +69,8 @@ export async function create_checkin_table(){
                     seat_nr TEXT,
                     name TEXT,
                     history TEXT,
-                    check_in TIMESTAMP with time zone default timezone('utc'::text, null)
+                    check_in TIMESTAMP with time zone default timezone('utc'::text, null),
+                    update_at TIMESTAMP with time zone default timezone('utc'::text, null)
                 )
                 `
                 console.debug("created: ", createdCheckInTable)

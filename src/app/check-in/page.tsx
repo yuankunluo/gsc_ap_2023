@@ -94,7 +94,7 @@ export default function CheckInPage(){
 
                                 {
                                     errors.myCode?.type === 'required' && 
-                                    <Message severity="error" text="请输入你的邀请码！" />
+                                    <Message severity="error" text="请输入你的入场码！" />
                                 }
                                 
 

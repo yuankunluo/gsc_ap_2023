@@ -1,9 +1,9 @@
 'use client'
 
-import { Accordion, AccordionTab } from 'primereact/accordion';
 import { useState } from 'react';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
+import { Card } from 'primereact/card';
 
 
 export default function AdminPage(){
@@ -18,19 +18,18 @@ export default function AdminPage(){
 
     return (
         <div className="w-full grid grid-cols-1 gap-4">
+
+            <Card
+                title="签到管理"
+                subTitle="这里是管理员区域，需要使用管理员密码"
+                >
+                <div className='grid gird-cols-1 gap-4'>
+                    <Button security='info' onClick={()=>goToList("upload")} label='上传文件' />
+                    <Button security='info' onClick={()=>goToList("data-list")} label='查阅签到记录' />
+                </div>
+                
+            </Card>
             
-            <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
-                <AccordionTab header="Upload File">
-                    <p>This action will DELETE ALL old record!</p>
-                    <Button security='info' onClick={()=>goToList("upload")}>Go To Upload</Button>
-                </AccordionTab>
-                <AccordionTab header="Checkin List">
-                    <Button security='info' onClick={()=>goToList("data-list")}>Go To Upload</Button>
-                </AccordionTab>
-                <AccordionTab header="Header III">
-                    Content III
-                </AccordionTab>
-            </Accordion>
         </div>
 
 
