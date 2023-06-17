@@ -10,6 +10,10 @@ async function doSwitch(myCode: string, hisCode: string){
     myCode = myCode.toLocaleLowerCase()
     hisCode = hisCode.toLocaleLowerCase()
 
+    if (myCode == hisCode){
+        throw new Error("不能自己转让给自己！")
+    }
+
     try {
         const data = await sql<CheckInData[]>`
         SELECT * FROM ${sql(checkInTabble)}
@@ -56,18 +60,17 @@ async function doSwitch(myCode: string, hisCode: string){
         }
 
         const history = `${mine.history} => ${hisCode}`
+        const myId = `${mine.id}`
 
-        const updated = await sql`
-        UPDATE ${sql(checkInTabble)} 
-        SET code = ${hisCode}, history = ${ history }, update_at = timezone('utc'::text, now())
-        WHERE id = ${ mine.id }  
+        await sql`
+            UPDATE ${sql(checkInTabble)} 
+            SET code = ${hisCode}, history = ${ history }, update_at = timezone('utc'::text, now())
+            WHERE id = ${ myId }
         `
 
-        console.debug("updated", updated)
-
         const newData = await sql<CheckInData[]>`
-        SELECT * FROM ${sql(checkInTabble)}
-        WHERE id = ${mine.id}
+            SELECT * FROM ${sql(checkInTabble)}
+            WHERE id = ${myId}
         ` 
         return newData[0]
     } catch(error){
