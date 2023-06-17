@@ -5,6 +5,7 @@ import { Button } from "primereact/button";
 import { useRouter } from "next/navigation";
 import { CheckInData } from '@/app/admin/handler';
 import { Divider } from 'primereact/divider';
+import { Message } from 'primereact/message';
 
 
 export function SuccessCard(props: {
@@ -31,7 +32,8 @@ export function SuccessCard(props: {
             subTitle="感谢你转让你的坐席给其他人，让我们将爱传递！"
             footer={footer}
             >
-            <h2>已经确认以下的坐席！</h2>
+            <Message severity="success" text="已经确认以下的坐席！" />
+
             <Divider />
             <ul>
                 <li><span>入场码：</span>{props.data.code}</li>
