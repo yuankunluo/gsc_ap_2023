@@ -7,15 +7,21 @@ import { useRouter } from 'next/navigation';
 import { Chip } from 'primereact/chip';
 import { ConfirmDialog } from 'primereact/confirmdialog'; // To use <ConfirmDialog> tag
 import { confirmDialog } from 'primereact/confirmdialog'; 
+import { useForm, Controller , SubmitHandler} from 'react-hook-form';
+import { Message } from 'primereact/message';
+import { invalid } from 'moment-timezone';
 
+interface MyCode {
+    myCode: string
+}
 
 export default function CheckInPage(){
 
-    const [myCode, setMyCode] = useState("")
+    const {register, formState:{errors, isValid}, handleSubmit, control} = useForm<MyCode>()
     const router = useRouter()
 
-    const goSignIn = (value: string) => {
-        router.push(`/check-in/${value}`)
+    const goSignIn = (myCode: MyCode) => {
+        router.push(`/check-in/${myCode.myCode}`)
     }
 
     const openHelper = () => {
@@ -31,7 +37,7 @@ export default function CheckInPage(){
     }
 
 
-    const confirmCheckIn = () => {
+    const confirmCheckIn = (myCode: MyCode) => {
         confirmDialog({
             message: '签到之后，你的坐席将被锁定，而且你也不能再进行转让。请您确认你会到场，并点击确定。如果你还不确定能出席，请点击取消',
             header: '你确定签到？',
@@ -42,24 +48,74 @@ export default function CheckInPage(){
         });
     }
 
+    const onSubmit: SubmitHandler<MyCode> = (data: MyCode) =>{
+        confirmCheckIn(data)
+    }
 
 
     return (
         
-        <div className="grid grid-cols-1 gap-4 p-4">
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-1 gap-4 p-4">
 
-            <h1>请输入你的<Chip label='入场码(?)' onClick={(e)=>{openHelper()}}/>，然后点击签到或者进行转让。</h1>
-            
-            <InputText placeholder="输入你的入场码" value={myCode} onChange={(e) => {
-                        setMyCode(e.target.value);
-                    }} />
-            <Button severity='success' disabled={myCode === ""} onClick={(e) => confirmCheckIn()}>签到锁定</Button>
-            
-    
+                <h1>请输入你的<Chip label='入场码(?)' onClick={(e)=>{openHelper()}}/>，然后点击签到或者进行转让。</h1>
 
-            <ConfirmDialog />
+                <Controller 
+                    name="myCode"
+                    control={control}
+                    rules={{
+                        required: true, 
+                        pattern:{
+                            value: /^[A-z|0-9]{6,6}$/,
+                            message: "你的入场码是一个6位的数字和字母的组合字符串, 例如 【TX887J】"
+                        }
+                        
+                    }}
+                    render={
+                        ({ field , fieldState}) => (
+                            <div className='grid grid-cols-1 gap-4'>
+                                <div className="p-inputgroup">
+                                    <span className="p-inputgroup-addon">
+                                        <i className="pi pi-ticket"></i>
+                                    </span>
+                                   
+                                    <InputText 
+                                        required
+                                        placeholder="你的入场码" 
+                                        type="text"
+                                        {...field}
+                                        />
+                                </div>
+                            
+                                {
+                                    errors.myCode?.type === 'pattern' && 
+                                    <Message severity="error" text={errors.myCode?.message} />
+                                }
 
-        </div>
+                                {
+                                    errors.myCode?.type === 'required' && 
+                                    <Message severity="error" text="请输入你的邀请码！" />
+                                }
+                                
+
+                            </div>
+                        )
+                    } />
+
+                
+                <Button 
+                    severity={isValid? 'success': 'warning'}
+                    label="签到"
+                    icon={isValid? 'pi pi-check':'pi pi-times'} 
+                    iconPos="right"  
+                    type="submit" />
+
+                <ConfirmDialog />
+
+            </div>
+        </form>
+
+
     )
 }
 

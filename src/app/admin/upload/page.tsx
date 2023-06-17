@@ -28,7 +28,6 @@ export default function Upload(){
 
 
     const [password, setPassword] = useState('')
-    const [fileText, setFileText] = useState('')
     const [checkInData, setCheckInData] = useState<CheckInData[]>([])
     const [partCodeData, setPartCodeData] = useState<PartyCodeData[]>([])
     const [dataType, setDataType] = useState<UploadFileType>("CheckIn")
@@ -153,40 +152,18 @@ export default function Upload(){
     }
         
 
-    const resetValue = () => {
-        setError('')
-        setPassword('')
-        setFileText('')
-        setCheckInData([])
-        setPartCodeData([])
-    }
-
-    const uploadButtonDisable = () => {
-        if (dataType == 'CheckIn'){
-            return checkInData.length == 0
-        } else {
-            return partCodeData.length == 0
-        }
-    }
 
 
-    const bottom = 
-            <div className="grid grid-cols-1 gap-4">
-                <Button severity="danger" disabled={ uploadButtonDisable() || password.length == 0} onClick={(e) => upload()}>Upload, Erase old data!!</Button>
-                <Button severity="warning" onClick={(e) => reset()}>Reset</Button>
-                <Button severity="info" onClick={(e) => {
-                    reset();
-                    router.back()
-                    }}>Back</Button>
-            </div>
+
 
     const onSubmit = (data: UploadFormData) => {
+        console.log(dataType)
         console.log(data)
     }; 
 
     return (
         <Card title="Upload File" 
-            subTitle="A CSV file containing: code, table_nr, optional: name, seat_nr"
+            subTitle="Upload a csv file will delete all old data!"
             // footer={bottom}
             >
 
@@ -203,10 +180,23 @@ export default function Upload(){
                         
                         <Controller name="dataType" 
                             control={control} 
-                            render={({ field, fieldState }) => (
-                                <SelectButton id={field.name} {...field} options={['CheckIn' , 'PartyCode']} />
+                            render={({ field: { value, onChange, ...field } }) => (
+                                <SelectButton 
+                                    required
+                                    {...field}
+                                    // value={dataType}
+                                    // onChange={(e) => {
+                                    //     if (e.target.value == null){
+                                    //         // setDataType(dataType)
+                                    //     } else {
+                                    //         setDataType(e.target.value)
+                                    //     }
+                                        
+                                    // }}
+                                id={field.name} options={['CheckIn' , 'PartyCode']} />
                                 )} />
 
+                        
                         <Controller name="password" 
                             control={control} 
                             render={({ field, fieldState }) => (
@@ -214,33 +204,37 @@ export default function Upload(){
                                     <span className="p-inputgroup-addon">
                                         <i className="pi pi-user"></i>
                                     </span>
-                                    <InputText placeholder="Password" type="passport"  id={field.name} {...field}/>
+                                    <InputText 
+                                        required
+                                        placeholder="Password" type="passport"  id={field.name} {...field}/>
                                     </div>
-                                )} />
+                        )} />
 
-                        
-                                <Controller
-                                    control={control}
-                                    name="uploadFile"
-                                    rules={{ required: "Recipe picture is required" }}
-                                    render={({ field: { value, onChange, ...field } }) => {
-                                    return (
-                                        <InputText
-                                        aria-label="Choose File" 
-                                        accept="text/csv"
-                                        multiple={false}
-                                        {...field}
-                                        onChange={(event) => {
-                                            onChange(event.target.files? event.target.files[0] : null);
-                                        }}
-                                        type="file"
-                                        id="picture"
-                                        />
-                                    );
-                                    }}
+                
+                        <Controller
+                            control={control}
+                            name="uploadFile"
+                            rules={{ required: "Recipe picture is required" }}
+                            render={({ field: { value, onChange, ...field } }) => {
+                            return (
+                                <InputText
+                                required
+                                aria-label="Choose File" 
+                                accept="text/csv"
+                                multiple={false}
+                                {...field}
+                                onChange={(event) => {
+                                    onChange(event.target.files? event.target.files[0] : null);
+                                }}
+                                type="file"
+                                id="picture"
                                 />
+                            );
+                            }}
+                        />
                     
                         <Button type="submit" label="Upload" severity="success"></Button>
+                        <Button onClick={()=>router.back()} label="Cancel" severity="info"></Button>
                     </div>
                 </form>
                             
