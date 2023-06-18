@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState, useTransition } from "react"
-import { CheckInData, PartyCodeData, UploadFileType, handleUploadCheckIn, handleUploadPartyCode } from "../handler";
+import { CheckInData, PartyCodeData, UploadFileType, handleUploadCheckIn, handleUploadPartyCode } from "../actions";
 import Papa from 'papaparse';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';

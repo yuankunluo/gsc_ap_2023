@@ -1,8 +1,7 @@
-import { CheckInData, PartyCodeData } from "@/app/admin/handler"
-import sql, { checkInTabble, partyCodeTable } from "@/lib/db"
-import { SuccessCard } from "./successCard"
-import ErrorCard from "@/app/component/errorCard";
+'use server'
 
+import sql, { checkInTabble, partyCodeTable } from "@/lib/db";
+import { CheckInData, PartyCodeData } from "../admin/actions";
 
 class SwitchError extends Error {
     constructor(message:string){
@@ -12,18 +11,25 @@ class SwitchError extends Error {
 }
 
 
+export interface SwitchResponse {
+    checkInData?: CheckInData
+    errorMessage?: string
+}
 
-async function handleSwitch(myCode: string, hisCode: string){
+
+export async function handleSwitch(myCode: string, hisCode: string){
 
     myCode = myCode.toLocaleLowerCase()
     hisCode = hisCode.toLocaleLowerCase()
 
-    
-    if (myCode == hisCode){
-        throw new SwitchError("不能自己转让给自己！")
-    }
+    const response: SwitchResponse = {}
 
     try {
+
+        if (myCode == hisCode){
+            throw new SwitchError("不能自己转让给自己！")
+        }
+
         const data = await sql<CheckInData[]>`
         SELECT * FROM ${sql(checkInTabble)}
         WHERE code = ${myCode.toLocaleLowerCase()}
@@ -31,7 +37,11 @@ async function handleSwitch(myCode: string, hisCode: string){
         console.debug("found mine", data)
 
         if (data.length == 0){
-            throw new SwitchError("抱歉，找不到你的坐席。")
+            throw new SwitchError("找不到你的坐席。")
+        }
+
+        if (data.length > 1){
+            throw new SwitchError("坐席记录重复，请联系管理员。")
         }
 
         const mine = data[0]
@@ -40,6 +50,7 @@ async function handleSwitch(myCode: string, hisCode: string){
             throw new SwitchError("你已经签到了，无法进行坐席转让！")
         }
 
+        
         if (mine.history){
             throw new SwitchError("此坐席已经转让过一次，无法进行坐席转让！")
         }
@@ -81,32 +92,16 @@ async function handleSwitch(myCode: string, hisCode: string){
             SELECT * FROM ${sql(checkInTabble)}
             WHERE id = ${myId}
         `
-        return newData[0]
+
+        response.checkInData = newData[0]
     } catch(error){
         console.error(error)
         if (error instanceof SwitchError){
-            throw error
+            response.errorMessage = error.message
         } else {
-            throw new SwitchError("未知错误,请联系系统管理员")
+            response.errorMessage = "未知错误,请联系系统管理员"
         }
     }
-}
 
-
-export default async function SwitchCodePage({params}:{
-    params: {
-        mycode: string,
-        hiscode: string
-    }
-}){
-
-    try{
-        const result = await handleSwitch(params.mycode, params.hiscode)
-
-        return <SuccessCard data={result}/>
-    } catch (error){
-        const myError = error as Error
-        return <ErrorCard errorMessage={myError.message} errorName="转让" showFooter={true}/>
-    }
-   
+    return response
 }

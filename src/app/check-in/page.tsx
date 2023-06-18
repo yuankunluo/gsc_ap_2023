@@ -2,7 +2,6 @@
 
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
-import { useRouter } from 'next/navigation';
 import { Chip } from 'primereact/chip';
 import { ConfirmDialog } from 'primereact/confirmdialog'; // To use <ConfirmDialog> tag
 import { confirmDialog } from 'primereact/confirmdialog'; 
@@ -14,6 +13,7 @@ import { Dialog } from 'primereact/dialog';
 import { CheckInCard } from '../component/checkInCard';
 import ErrorCard from '../component/errorCard';
 import { Toast } from 'primereact/toast';
+import { useRouter } from 'next/navigation';
 
 interface MyCheckInData {
     myCode: string,
@@ -23,10 +23,10 @@ interface MyCheckInData {
 export default function CheckInPage(){
 
     const [isPending, startTransition] = useTransition()
-    const [responseError, setResponseError] = useState<Error>()
     const [checkInResponse, setCheckInResponse] = useState<CheckInResponse>()
 
     const toast = useRef<Toast>(null);
+    const router = useRouter()
 
 
     const {register, formState:{errors, isValid}, handleSubmit, control} = useForm<MyCheckInData>()
@@ -101,15 +101,15 @@ export default function CheckInPage(){
     return (
         <>
         <Toast ref={toast} />
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-1 gap-4 p-4">
+        <div className="grid grid-cols-1 gap-4 p-4">
+            <h1>请输入你的
+                        <Chip label='入场码(?)' onClick={(e)=>{openHelper()}}/>
+                        和
+                        <Chip label='签到码(?)' onClick={(e)=>{openHelperCheckInCode()}}/>
+                        然后点击签。</h1>
 
-                <h1>请输入你的
-                    <Chip label='入场码(?)' onClick={(e)=>{openHelper()}}/>
-                    和
-                    <Chip label='签到码(?)' onClick={(e)=>{openHelperCheckInCode()}}/>
-                    然后点击签。</h1>
-
+            <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 gap-4 p-4'>
+            
                 <Controller 
                     name="myCode"
                     control={control}
@@ -194,27 +194,34 @@ export default function CheckInPage(){
                         )
                     } />
 
-                
                 <Button 
-                    disabled={isPending}
-                    severity={isValid? 'success': 'warning'}
-                    label={isPending ? '签到中...' : '立即签到' }
-                    icon={isValid? 'pi pi-check':'pi pi-times'} 
-                    iconPos="right"  
-                    type="submit" />
+                        onClick={()=>{
+                            router.back()
+                        }}
+                        disabled={isPending}
+                        severity={isValid? 'success': 'warning'}
+                        label={isPending ? '签到中...' : '立即签到' }
+                        icon={isValid? 'pi pi-check':'pi pi-times'} 
+                        iconPos="right"  
+                        type="submit" />
+            </form>
 
-                <ConfirmDialog />
-
+            <div className='grid grid-cols-1 gap-4 px-4'>
+                
+                    <Button severity='info' onClick={()=>{router.back()}} label="返回" />
             </div>
-        </form>
+        </div>
 
+
+
+        <ConfirmDialog />
 
        <Dialog header="签到成功" visible={checkInResponse?.checkInData != undefined} style={{ width: '95vw' }} onHide={()=>{setCheckInResponse(undefined)}}>
             { checkInResponse?.checkInData && <CheckInCard data={checkInResponse?.checkInData} />}
         </Dialog>
 
-        <Dialog header="签到失败" visible={checkInResponse?.errorMssage != undefined } style={{ width: '95vw' }} onHide={() => {setCheckInResponse(undefined)}}>
-            { checkInResponse?.errorMssage && <ErrorCard errorName='签到错误' errorMessage={checkInResponse?.errorMssage} showFooter={false}/> }
+        <Dialog header="签到失败" visible={checkInResponse?.errorMessage != undefined } style={{ width: '95vw' }} onHide={() => {setCheckInResponse(undefined)}}>
+            { checkInResponse?.errorMessage && <ErrorCard errorName='签到错误' errorMessage={checkInResponse?.errorMessage} showFooter={false}/> }
         </Dialog>
 
         </>

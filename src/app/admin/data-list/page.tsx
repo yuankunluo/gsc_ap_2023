@@ -1,4 +1,4 @@
-import { getAllData } from "../handler"
+import { getAllData } from "../actions"
 import { DataTableComp } from "./dataTable";
 
 

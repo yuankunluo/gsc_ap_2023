@@ -1,7 +1,7 @@
 'use server'
 
 import sql, { checkInCodeTable, checkInTabble } from "@/lib/db";
-import { CheckInData } from "../admin/handler";
+import { CheckInData } from "../admin/actions";
 
 
 class CheckInError extends Error {
@@ -14,7 +14,7 @@ class CheckInError extends Error {
 
 export interface CheckInResponse {
     checkInData?: CheckInData
-    errorMssage?: string
+    errorMessage?: string
 }
 
 
@@ -77,9 +77,9 @@ export async function handleCheckIn(code: string, checkInCode: string){
     } catch(error){
         console.error(error)
         if (error instanceof CheckInError){
-            response.errorMssage = error.message
+            response.errorMessage = error.message
         } else {
-            response.errorMssage = "未知错误,请联系系统管理员"
+            response.errorMessage = "未知错误,请联系系统管理员"
         }
     }
 

@@ -3,12 +3,12 @@
 import { Card } from 'primereact/card';
 import { Button } from "primereact/button";
 import { useRouter } from "next/navigation";
-import { CheckInData } from '@/app/admin/handler';
+import { CheckInData } from '@/app/admin/actions';
 import { Divider } from 'primereact/divider';
 import { Message } from 'primereact/message';
 
 
-export function SuccessCard(props: {
+export function SwitchSuccessCard(props: {
     data: CheckInData
 }) {
 
@@ -32,7 +32,7 @@ export function SuccessCard(props: {
             subTitle="感谢你转让你的坐席给其他人，让我们将爱传递！"
             footer={footer}
             >
-            <Message severity="success" text="已经确认以下的坐席！" />
+            <Message severity="success" text="转让完成，你的原入场码已经不能再进行签到入场！已经确认以下的坐席:" />
 
             <Divider />
             <ul>

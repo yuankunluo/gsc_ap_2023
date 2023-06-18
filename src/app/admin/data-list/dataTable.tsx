@@ -1,7 +1,7 @@
 'use client'
 
 import { Column } from "primereact/column";
-import { CheckInData } from "../handler";
+import { CheckInData } from "../actions";
 import { DataTable } from 'primereact/datatable';
 import { Button } from "primereact/button";
 import { useState } from "react";

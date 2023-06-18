@@ -1,7 +1,7 @@
 'use client'
 
 import { convertToDateString } from "@/utils";
-import { CheckInData } from "../admin/handler";
+import { CheckInData } from "../admin/actions";
 import { Card } from 'primereact/card';
 import { ProgressBar } from 'primereact/progressbar';
 

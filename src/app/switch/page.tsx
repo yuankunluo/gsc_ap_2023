@@ -1,7 +1,7 @@
 'use client'
 
 import { InputText } from 'primereact/inputtext';
-import { useState } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import { Chip } from 'primereact/chip';
@@ -10,6 +10,11 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { Card } from 'primereact/card';
 import { useForm, Controller , SubmitHandler} from 'react-hook-form';
 import { Message } from 'primereact/message';
+import { SwitchResponse, handleSwitch } from './actions';
+import { Dialog } from 'primereact/dialog';
+import { SwitchSuccessCard } from '../component/switchSuccessCard';
+import ErrorCard from '../component/errorCard';
+import { Toast } from 'primereact/toast';
 
 
 interface SwitchCode {
@@ -21,17 +26,34 @@ export default function SwitchPage(){
 
     const {register, formState:{errors, isValid}, handleSubmit, control} = useForm<SwitchCode>()
 
+    const [isPending, startTransition] = useTransition()
+    const [switchReponse, setSwitchResponse] = useState<SwitchResponse>()
+
     const router = useRouter()
+    const toast = useRef<Toast>(null);
 
     const comfirmSwitch = (data: SwitchCode) => {
         confirmDialog({
-            message: `你自愿放弃你的坐席，并将此转让给对方。操作后，你将失去坐席，也不能再进行转让。`,
+            message: `你自愿放弃你的坐席，并将此转让给对方。操作后，你将失去坐席，也不能再进行转让。已签到的入场码不能转让！`,
             header: '确认转让吗？',
             acceptLabel: "是的，我确定转让",
             rejectLabel: "取消",
             accept: () => {
+                startTransition(()=>{
 
-                router.push(`/switch/${data.myCode}/${data.hisCode}`)
+                    handleSwitch(data.myCode, data.hisCode)
+                    .then(data=>{
+                        setSwitchResponse(data)
+                    }).catch(error=>{
+                        console.error(error)
+                        toast.current?.show({
+                            severity:'error', 
+                            summary: 'ERROR', 
+                            detail:'发生未知错误', 
+                            life: 3000})
+                    })
+
+                })
             },
             reject: () => {}
         });
@@ -51,7 +73,9 @@ export default function SwitchPage(){
     }
 
     return (
-        
+        <>
+        <Toast ref={toast} />
+
         <div className="grid grid-cols-1 gap-4 p-4">
 
             <Card
@@ -148,6 +172,7 @@ export default function SwitchPage(){
                         <div className='grid grid-cols-2 gap-4'>
                             <Button onClick={()=>router.back()}>返回</Button>
                             <Button
+                                disabled={isPending}
                                 severity={isValid? 'success': 'warning'}
                                 icon="pi pi-check" 
                                 iconPos='right'
@@ -170,6 +195,17 @@ export default function SwitchPage(){
             <ConfirmDialog />
 
         </div>
+
+        <Dialog header="转让成功" visible={switchReponse?.checkInData != undefined} style={{ width: '95vw' }} onHide={()=>{setSwitchResponse(undefined)}}>
+            { switchReponse?.checkInData && <SwitchSuccessCard data={switchReponse?.checkInData} />}
+        </Dialog>
+
+        <Dialog header="转让失败" visible={switchReponse?.errorMessage != undefined } style={{ width: '95vw' }} onHide={() => {setSwitchResponse(undefined)}}>
+            { switchReponse?.errorMessage && <ErrorCard errorName='转让错误' errorMessage={switchReponse?.errorMessage} showFooter={false}/> }
+        </Dialog>
+        </>
+        
+        
     )
 }
 
