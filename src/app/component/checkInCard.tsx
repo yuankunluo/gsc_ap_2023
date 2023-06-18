@@ -4,6 +4,7 @@ import { convertToDateString } from "@/utils";
 import { CheckInData } from "../admin/actions";
 import { Card } from 'primereact/card';
 import { ProgressBar } from 'primereact/progressbar';
+import { Chip } from 'primereact/chip';
 
 export function CheckInCard(props: {
     data: CheckInData
@@ -28,12 +29,14 @@ export function CheckInCard(props: {
         >
             <div>
                 <ul>
-                    <li><span>邀请码：</span>{props.data.code}</li>
-                    <li><span>昵称：</span>{props.data.name}</li>
-                    <li><span>桌号：</span>{props.data.table_nr}</li>
-                    <li><span>座位号：</span>{props.data.seat_nr}</li>
+                    <li><span className="w-3/12	">邀请码：</span><Chip label={props.data.code.toUpperCase()}/></li>
+                    <li><span className="w-3/12	">昵称：</span>{props.data.name?.toLocaleUpperCase()}</li>
+                    <li><span className="w-3/12	">桌号：</span><Chip label={props.data.table_nr.toLocaleUpperCase()} /></li>
+                    <li><span>座位号：</span>{props.data.seat_nr?.toLocaleUpperCase()}</li>
                     <li><span>签到时间:</span>{convertToDateString(props.data.check_in)}</li>
-                    <li><span>录入时间:</span>{convertToDateString(props.data.inserted_at)}</li>
+                    <li><span>签到码:</span>{props.data.check_in_code?.toUpperCase()}</li>
+                    <li><span>转让记录:</span>{props.data.history?.toLocaleUpperCase()}</li>
+                    <li><span>录入时间::</span>{convertToDateString(props.data.inserted_at)}</li>
                 </ul>
             </div>
        

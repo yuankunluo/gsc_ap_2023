@@ -132,12 +132,12 @@ export default function SeatPage(){
         </div>
 
 
-        <Dialog header="签到成功" visible={checkInResponse?.checkInData != undefined} style={{ width: '95vw' }} onHide={()=>{setCheckInResponse(undefined)}}>
+        <Dialog header="查询成功" visible={checkInResponse?.checkInData != undefined} style={{ width: '95vw' }} onHide={()=>{setCheckInResponse(undefined)}}>
             { checkInResponse?.checkInData && <CheckInCard title="坐席卡" data={checkInResponse?.checkInData} />}
         </Dialog>
 
-        <Dialog header="签到失败" visible={checkInResponse?.errorMessage != undefined } style={{ width: '95vw' }} onHide={() => {setCheckInResponse(undefined)}}>
-            { checkInResponse?.errorMessage && <ErrorCard errorName='签到错误' errorMessage={checkInResponse?.errorMessage} showFooter={false}/> }
+        <Dialog header="查询失败" visible={checkInResponse?.errorMessage != undefined } style={{ width: '95vw' }} onHide={() => {setCheckInResponse(undefined)}}>
+            { checkInResponse?.errorMessage && <ErrorCard errorName='坐席错误' errorMessage={checkInResponse?.errorMessage} showFooter={false}/> }
         </Dialog>
         </>
     )
