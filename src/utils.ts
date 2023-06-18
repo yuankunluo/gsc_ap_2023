@@ -26,5 +26,5 @@ export function makeid(length:number) {
 }
 
 export function getRandom(min: number, max:number){
-    return  Math.floor(Math.random() * (max - min) + min);
+    return Math.floor(Math.random() * (max - min) + min);
 }

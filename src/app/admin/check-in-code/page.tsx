@@ -39,7 +39,6 @@ export default function CheckInCodePage(){
                     //     severity:'success', 
                     //     summary: `获得签到码`, 
                     //     life: 3000})
-                    
                     setCheckInCodeData(data.code)
                 } 
 

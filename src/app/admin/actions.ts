@@ -10,8 +10,8 @@ export type UploadFileType = 'CheckIn' | 'PartyCode'
 
 interface DbRandomSelection {
     ct: number
-    min_id: number
-    max_id: number
+    min_id: string
+    max_id: string
     id_span: number
 }
 
@@ -211,15 +211,18 @@ export async function getCheckInCode(){
 
         console.debug("randomSelection",randomSelection)
 
-        const randomId = getRandom(randomSelection[0].min_id, randomSelection[0].max_id)
-
-
-
+        const max = parseInt(randomSelection[0].max_id)
+        const min = parseInt(randomSelection[0].min_id)
+        const randomId = Math.floor(Math.random() * (max - min) + min)
+        console.debug("randomId", randomId)
 
         const data = await sql<CheckInCodeData[]>`
         SELECT * FROM ${sql(checkInCodeTable)}
         WHERE id = ${randomId}
         `
+
+        
+
         checkInCodeResponse.code = data[0]
     } catch(error){
         console.error(error)
