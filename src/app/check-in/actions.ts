@@ -1,7 +1,7 @@
 'use server'
 
 import sql, { checkInCodeTable, checkInTabble } from "@/lib/db";
-import { CheckInCodeData, CheckInData } from "../admin/actions";
+import { CheckInCodeData, CheckInData, isCheckInCodeExpired } from "../admin/actions";
 
 
 class CheckInError extends Error {
@@ -27,6 +27,16 @@ export async function handleCheckIn(code: string, checkInCode: string){
     const response: CheckInResponse = {}
 
     try {
+
+
+        // TODO: CheckInCode validation
+
+        const expired = await isCheckInCodeExpired(checkInCode)
+
+        if (expired){
+            throw new CheckInError("签到码无效")
+        }
+
         const checkInRecords = await sql<CheckInData[]>`
             SELECT * FROM ${sql(checkInTabble)}
             WHERE code = ${ code }
@@ -46,6 +56,8 @@ export async function handleCheckIn(code: string, checkInCode: string){
         }
 
         
+        
+
         const checkInCodeRecords = await sql<CheckInCodeData[]>`
             SELECT * FROM ${sql(checkInCodeTable)}
             WHERE code = ${checkInCode} AND used_by is NULL
@@ -60,7 +72,9 @@ export async function handleCheckIn(code: string, checkInCode: string){
         // Updata CheckIn
         const updatedCheckIn = await sql`
                 UPDATE ${sql(checkInTabble)} 
-                SET check_in = timezone('utc'::text, now()), update_at = timezone('utc'::text, now())
+                SET check_in = timezone('utc'::text, now()), 
+                    update_at = timezone('utc'::text, now()),
+                    check_in_code = ${checkInCode}
                 WHERE code = ${ code } 
                 `
         console.debug("updated", updatedCheckIn)

@@ -14,6 +14,8 @@ import { CheckInCard } from '../component/checkInCard';
 import ErrorCard from '../component/errorCard';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation'
+
 
 interface MyCheckInData {
     myCode: string,
@@ -27,9 +29,23 @@ export default function CheckInPage(){
 
     const toast = useRef<Toast>(null);
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const checkInCode = searchParams.get('check_code')
+
+    const defaultValue: MyCheckInData = {
+        myCode: '',
+        checkInCode: ''
+    }
+
+    if (checkInCode){
+        defaultValue.checkInCode = checkInCode
+        
+    }
 
 
-    const {register, formState:{errors, isValid}, handleSubmit, control} = useForm<MyCheckInData>()
+    const {register, formState:{errors, isValid}, handleSubmit, control} = useForm<MyCheckInData>({
+        defaultValues: defaultValue
+    })
 
 
     const goCheckIn = (data: MyCheckInData) => {

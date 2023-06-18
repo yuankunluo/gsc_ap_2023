@@ -1,13 +1,12 @@
 'use client'
 
 import { useEffect, useRef, useState, useTransition } from "react"
-import { CheckInCodeData, getCheckInCode } from "../actions"
+import { CheckInCodeData, generateCheckInCode } from "../actions"
 import { Button } from "primereact/button"
 import { Toast } from "primereact/toast"
 import { useRouter } from "next/navigation"
 import { Card } from "primereact/card"
 import QRCode from "react-qr-code"
-import { getRandom } from "@/utils"
 import { ProgressBar } from 'primereact/progressbar';
 
 
@@ -24,7 +23,7 @@ export default function CheckInCodePage(){
     const refresh = ()=>{
         startTransition(()=>{
 
-            getCheckInCode().then((data)=>{
+            generateCheckInCode().then((data)=>{
 
                 if (data.errorMessage){
                     toast.current?.show({
@@ -73,10 +72,13 @@ export default function CheckInCodePage(){
         <div className="w-full">
             <Card 
                 // header={header}
-                subTitle={`请使用以上的【签到码】进行签到, 有效期 ${expireInSeconds} 秒`}
+                // subTitle={`请使用以上的【签到码】进行签到, 有效期 ${expireInSeconds} 秒`}
                 title={checkInCodeData? checkInCodeData.code?.toLocaleUpperCase() : '请刷新'}>
                 <div className="grid grid-cols-1 p-4 gap-4">
-                    <QRCode value={`${window.location.origin}/check-in`} />
+
+
+
+                    <QRCode value={`${window.location.origin}/check-in?check_code=${checkInCodeData?.code}`} />
                     
                     <Button disabled={isPending} label="刷新" onClick={()=>{refresh()}} severity="success"/>
                     <Button disabled={isPending} label="返回" onClick={()=>{router.back()}} severity="info"/>
