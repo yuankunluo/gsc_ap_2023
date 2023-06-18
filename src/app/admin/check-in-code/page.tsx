@@ -13,12 +13,12 @@ import { ProgressBar } from 'primereact/progressbar';
 
 export default function CheckInCodePage(){
 
-    const [checkInCodeData, setCheckInCodeData] = useState<CheckInCodeData[]>()
+    const [checkInCodeData, setCheckInCodeData] = useState<CheckInCodeData>()
     const [progressBarValue, setProgressBarValue] = useState<number>(0)
-    const [randomIndex, setRandomIndex] = useState<string>()
     const [isPending, startTransition] = useTransition()
     const toast = useRef<Toast>(null);
     const router = useRouter()
+    const expireInSeconds = process.env.CHECK_IN_CODE_EXPIRE ? parseInt(process.env.CHECK_IN_CODE_EXPIRE) : 30
 
 
     const refresh = ()=>{
@@ -34,14 +34,13 @@ export default function CheckInCodePage(){
                         life: 3000})
                 } 
 
-                if (data.codes){
-                    toast.current?.show({
-                        severity:'success', 
-                        summary: `获得 ${data.codes.length} 条签到码`, 
-                        life: 3000})
+                if (data.code){
+                    // toast.current?.show({
+                    //     severity:'success', 
+                    //     summary: `获得签到码`, 
+                    //     life: 3000})
                     
-                    setCheckInCodeData(data.codes)
-                    setRandomIndex(data.codes[0].code)
+                    setCheckInCodeData(data.code)
                 } 
 
             }).catch((error)=>{
@@ -54,13 +53,11 @@ export default function CheckInCodePage(){
 
     useEffect(() => {
 
-        const intervalMS = 1000*15
+
+        const intervalMS = 1000*expireInSeconds
         
         const interval = setInterval(() => {
-            if (checkInCodeData?.length && checkInCodeData.length>0){
-                const random = getRandom(1, checkInCodeData.length-1)
-                setRandomIndex(checkInCodeData[random].code)
-            }
+           refresh()
         }, intervalMS);
     
         return () => clearInterval(interval);
@@ -77,8 +74,8 @@ export default function CheckInCodePage(){
         <div className="w-full">
             <Card 
                 // header={header}
-                subTitle="请使用以上的【签到码】进行签到"
-                title={randomIndex? randomIndex?.toLocaleUpperCase() : '请刷新'}>
+                subTitle={`请使用以上的【签到码】进行签到, 有效期 ${expireInSeconds} 秒`}
+                title={checkInCodeData? checkInCodeData.code?.toLocaleUpperCase() : '请刷新'}>
                 <div className="grid grid-cols-1 p-4 gap-4">
                     <QRCode value={`${window.location.origin}/check-in`} />
                     

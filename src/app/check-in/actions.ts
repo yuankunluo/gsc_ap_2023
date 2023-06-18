@@ -1,7 +1,7 @@
 'use server'
 
 import sql, { checkInCodeTable, checkInTabble } from "@/lib/db";
-import { CheckInData } from "../admin/actions";
+import { CheckInCodeData, CheckInData } from "../admin/actions";
 
 
 class CheckInError extends Error {
@@ -31,7 +31,7 @@ export async function handleCheckIn(code: string, checkInCode: string){
             SELECT * FROM ${sql(checkInTabble)}
             WHERE code = ${ code }
         `
-        console.debug("found", checkInRecords)
+        console.debug("found checkInRecords", checkInRecords)
 
         if (checkInRecords.length == 0){
             throw new CheckInError("我们没有找到你的坐席，请联系组委会成员查询。")
@@ -41,33 +41,39 @@ export async function handleCheckIn(code: string, checkInCode: string){
             throw new CheckInError("我们查到多条坐席属于你，请联系组委会成员确认。")
         }
 
+        if (checkInRecords[0].check_in){
+            throw new CheckInError("你已经完成签到，请勿重复操作。")
+        }
+
         
-        const checkInCodeRecords = await sql`
-            SELECT code FROM ${sql(checkInCodeTable)}
-            WHERE code = ${checkInCode}
+        const checkInCodeRecords = await sql<CheckInCodeData[]>`
+            SELECT * FROM ${sql(checkInCodeTable)}
+            WHERE code = ${checkInCode} AND used_by is NULL
         `
 
-        console.debug('found', checkInCodeRecords)
+        console.debug('found checkInCodeRecords', checkInCodeRecords)
 
         if (checkInCodeRecords.length == 0){
-            throw new CheckInError("抱歉， 你的签到码错误。")
+            throw new CheckInError("签到码无效。")
         }
-
-        if (checkInRecords[0].check_in){
-            response.checkInData = checkInRecords[0]
-            return response
-        }
-
 
         // Updata CheckIn
-
-        const updated = await sql`
+        const updatedCheckIn = await sql`
                 UPDATE ${sql(checkInTabble)} 
-                SET check_in = timezone('utc'::text, now())
+                SET check_in = timezone('utc'::text, now()), update_at = timezone('utc'::text, now())
                 WHERE code = ${ code } 
                 `
-        console.debug("updated", updated)
-            
+        console.debug("updated", updatedCheckIn)
+        
+        // Update CheckInCode
+        const updatedCheckInCode = await sql`
+            UPDATE ${sql(checkInCodeTable)}
+            SET used_by = ${code}, updated_at = timezone('utc'::text, now())
+            WHERE code = ${checkInCode}
+        `
+        
+        console.debug("updatedCheckInCode", updatedCheckInCode)
+
         const result = await sql<CheckInData[]>`
         SELECT * FROM ${sql(checkInTabble)}
         WHERE code = ${ code }
