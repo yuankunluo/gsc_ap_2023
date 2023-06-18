@@ -30,6 +30,17 @@ export interface SqlCount {
     count: number
 }
 
+export interface CheckInCodeData {
+    id?: number
+    code: string
+}
+
+
+export interface CheckInCodeResponse {
+    codes?: CheckInCodeData[]
+    errorMessage?: string
+}
+
 export async function create_party_code_table(){
     try{
         const deletedPartyCode = await sql`DELETE FROM ${sql(partyCodeTable)} WHERE code != ''`;
@@ -162,6 +173,21 @@ export async function getAllData(){
     const data = await sql<CheckInData[]>`SELECT * FROM ${sql(checkInTabble)}`
 
     return data
+}
+
+export async function getCheckInCode(){
+    const checkInCodeResponse: CheckInCodeResponse = {}
+
+    try {
+        const data = await sql<CheckInCodeData[]>`
+        SELECT * FROM ${sql(checkInCodeTable)}
+        `
+        checkInCodeResponse.codes = data
+    } catch(error){
+        console.error(error)
+        checkInCodeResponse.errorMessage = "错误"
+    }
+    return checkInCodeResponse
 }
 
 export async function generateCheckInCode(){

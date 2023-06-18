@@ -24,3 +24,7 @@ export function makeid(length:number) {
     }
     return result;
 }
+
+export function getRandom(min: number, max:number){
+    return  Math.floor(Math.random() * (max - min) + min);
+}

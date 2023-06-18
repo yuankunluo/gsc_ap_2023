@@ -58,9 +58,11 @@ export default function AdminPage(){
                 subTitle="这里是管理员区域，需要使用管理员密码"
                 >
                 <div className='grid gird-cols-1 gap-4'>
-                    <Button security='info' onClick={()=>goToList("upload")} label='上传文件' />
-                    <Button security='info' onClick={()=>goToList("data-list")} label='查阅签到记录' />
-                    <Button disabled={isGeneratingPending} security='info' onClick={()=>startGeneratingCheckInCode()} label='生成签到随机码' />                
+                    <Button severity='info' onClick={()=>goToList("check-in-code")} label='生成签到二维码' />
+                    <Button disabled={isGeneratingPending} severity='info' onClick={()=>startGeneratingCheckInCode()} label='生成签到随机码' />
+                    <Button severity='danger' onClick={()=>goToList("upload")} label='上传文件' />
+                    <Button severity='success' onClick={()=>goToList("data-list")} label='查阅签到记录' />
+                                    
                 </div>
                 
             </Card>
