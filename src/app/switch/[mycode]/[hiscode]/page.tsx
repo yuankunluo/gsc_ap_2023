@@ -13,7 +13,7 @@ class SwitchError extends Error {
 
 
 
-async function doSwitch(myCode: string, hisCode: string){
+async function handleSwitch(myCode: string, hisCode: string){
 
     myCode = myCode.toLocaleLowerCase()
     hisCode = hisCode.toLocaleLowerCase()
@@ -83,13 +83,12 @@ async function doSwitch(myCode: string, hisCode: string){
         `
         return newData[0]
     } catch(error){
-        
+        console.error(error)
         if (error instanceof SwitchError){
             throw error
         } else {
             throw new SwitchError("未知错误,请联系系统管理员")
         }
-        console.error(error)
     }
 }
 
@@ -102,7 +101,7 @@ export default async function SwitchCodePage({params}:{
 }){
 
     try{
-        const result = await doSwitch(params.mycode, params.hiscode)
+        const result = await handleSwitch(params.mycode, params.hiscode)
 
         return <SuccessCard data={result}/>
     } catch (error){

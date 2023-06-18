@@ -8,6 +8,8 @@ import { ConfirmDialog } from 'primereact/confirmdialog'; // To use <ConfirmDial
 import { confirmDialog } from 'primereact/confirmdialog'; 
 import { useForm, Controller , SubmitHandler} from 'react-hook-form';
 import { Message } from 'primereact/message';
+import { useTransition } from 'react'
+import { handleCheckIn } from './handler';
 
 interface MyCheckInData {
     myCode: string,
@@ -16,12 +18,28 @@ interface MyCheckInData {
 
 export default function CheckInPage(){
 
+    let [isPending, startTransition] = useTransition()
+
     const {register, formState:{errors, isValid}, handleSubmit, control} = useForm<MyCheckInData>()
     const router = useRouter()
 
-    const goSignIn = (myCode: MyCheckInData) => {
-        console.log(myCode)
+    const goCheckIn = (data: MyCheckInData) => {
+        console.log(data)
         // router.push(`/check-in/${myCode.myCode}`)
+        try{
+            startTransition(()=>{
+                handleCheckIn(data.myCode, data.checkInCode).then(
+                    (data) => {
+                        console.log(data)
+                    }
+                ).catch((error) => {
+                    console.log(error)
+                })
+            })
+        } catch(error){
+            console.error(error)
+        }
+        
     }
 
     const openHelper = () => {
@@ -55,7 +73,7 @@ export default function CheckInPage(){
             header: '你确定签到？',
             acceptLabel: "确定",
             rejectLabel: "取消",
-            accept: () => {goSignIn(myCode)},
+            accept: () => {goCheckIn(myCode)},
             reject: () => {}
         });
     }
