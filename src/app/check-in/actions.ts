@@ -12,11 +12,19 @@ class CheckInError extends Error {
 }
 
 
+export interface CheckInResponse {
+    checkInData?: CheckInData
+    errorMssage?: string
+}
+
 
 export async function handleCheckIn(code: string, checkInCode: string){
 
+
     code = code.toLocaleLowerCase()
     checkInCode = checkInCode.toLocaleLowerCase()
+
+    const response: CheckInResponse = {}
 
     try {
         const checkInRecords = await sql<CheckInData[]>`
@@ -29,7 +37,7 @@ export async function handleCheckIn(code: string, checkInCode: string){
             throw new CheckInError("我们没有找到你的坐席，请联系组委会成员查询。")
         }
 
-        if (checkInCode.length > 1){
+        if (checkInRecords.length > 1){
             throw new CheckInError("我们查到多条坐席属于你，请联系组委会成员确认。")
         }
 
@@ -38,6 +46,8 @@ export async function handleCheckIn(code: string, checkInCode: string){
             SELECT code FROM ${sql(checkInCodeTable)}
             WHERE code = ${checkInCode}
         `
+
+        console.debug('found', checkInCodeRecords)
 
         if (checkInCodeRecords.length == 0){
             throw new CheckInError("抱歉， 你的签到码错误。")
@@ -57,15 +67,16 @@ export async function handleCheckIn(code: string, checkInCode: string){
         SELECT * FROM ${sql(checkInTabble)}
         WHERE code = ${ code }
         `
-        return result[0]
+        response.checkInData = result[0]
 
     } catch(error){
         console.error(error)
         if (error instanceof CheckInError){
-            throw error
+            response.errorMssage = error.message
         } else {
-            throw new CheckInError("未知错误,请联系系统管理员")
+            response.errorMssage = "未知错误,请联系系统管理员"
         }
     }
 
+    return response
 }

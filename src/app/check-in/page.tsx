@@ -8,8 +8,12 @@ import { ConfirmDialog } from 'primereact/confirmdialog'; // To use <ConfirmDial
 import { confirmDialog } from 'primereact/confirmdialog'; 
 import { useForm, Controller , SubmitHandler} from 'react-hook-form';
 import { Message } from 'primereact/message';
-import { useTransition } from 'react'
-import { handleCheckIn } from './handler';
+import { useRef, useState, useTransition } from 'react'
+import { CheckInResponse, handleCheckIn } from './actions';
+import { Dialog } from 'primereact/dialog';
+import { CheckInCard } from '../component/checkInCard';
+import ErrorCard from '../component/errorCard';
+import { Toast } from 'primereact/toast';
 
 interface MyCheckInData {
     myCode: string,
@@ -18,10 +22,15 @@ interface MyCheckInData {
 
 export default function CheckInPage(){
 
-    let [isPending, startTransition] = useTransition()
+    const [isPending, startTransition] = useTransition()
+    const [responseError, setResponseError] = useState<Error>()
+    const [checkInResponse, setCheckInResponse] = useState<CheckInResponse>()
+
+    const toast = useRef<Toast>(null);
+
 
     const {register, formState:{errors, isValid}, handleSubmit, control} = useForm<MyCheckInData>()
-    const router = useRouter()
+
 
     const goCheckIn = (data: MyCheckInData) => {
         console.log(data)
@@ -31,9 +40,15 @@ export default function CheckInPage(){
                 handleCheckIn(data.myCode, data.checkInCode).then(
                     (data) => {
                         console.log(data)
+                        setCheckInResponse(data)
                     }
                 ).catch((error) => {
-                    console.log(error)
+                    console.error(error)
+                    toast.current?.show({
+                        severity:'error', 
+                        summary: 'ERROR', 
+                        detail:'发生未知错误', 
+                        life: 3000})
                 })
             })
         } catch(error){
@@ -56,7 +71,7 @@ export default function CheckInPage(){
 
     const openHelperCheckInCode = () => {
         confirmDialog({
-            message: `【签到码】是年会现场入口公布的一组四位数字和字母组合的随机，确保只有到场的人能签到。`,
+            message: `【签到码】是年会现场入口公布的一组四位数字和字母组合的随机，只有到场的人能签到。`,
             header: '签到码',
             acceptLabel: "我了解了",
             rejectLabel: "我拒绝",
@@ -84,7 +99,8 @@ export default function CheckInPage(){
 
 
     return (
-        
+        <>
+        <Toast ref={toast} />
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 gap-4 p-4">
 
@@ -180,8 +196,9 @@ export default function CheckInPage(){
 
                 
                 <Button 
+                    disabled={isPending}
                     severity={isValid? 'success': 'warning'}
-                    label="签到"
+                    label={isPending ? '签到中...' : '立即签到' }
                     icon={isValid? 'pi pi-check':'pi pi-times'} 
                     iconPos="right"  
                     type="submit" />
@@ -192,6 +209,15 @@ export default function CheckInPage(){
         </form>
 
 
+       <Dialog header="签到成功" visible={checkInResponse?.checkInData != undefined} style={{ width: '95vw' }} onHide={()=>{setCheckInResponse(undefined)}}>
+            { checkInResponse?.checkInData && <CheckInCard data={checkInResponse?.checkInData} />}
+        </Dialog>
+
+        <Dialog header="签到失败" visible={checkInResponse?.errorMssage != undefined } style={{ width: '95vw' }} onHide={() => {setCheckInResponse(undefined)}}>
+            { checkInResponse?.errorMssage && <ErrorCard errorName='签到错误' errorMessage={checkInResponse?.errorMssage} showFooter={false}/> }
+        </Dialog>
+
+        </>
     )
 }
 

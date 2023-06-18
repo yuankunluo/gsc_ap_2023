@@ -35,7 +35,7 @@ async function generateCheckInCode(){
     try {
         const codes = Array(1000).fill(1).map((x,y) => {
             return {
-                code: makeid(4)
+                code: makeid(4).toLocaleLowerCase()
             }
         })
 

@@ -106,7 +106,7 @@ export default async function SwitchCodePage({params}:{
         return <SuccessCard data={result}/>
     } catch (error){
         const myError = error as Error
-        return <ErrorCard errorMessage={ myError.message} errorName={myError.name}/>
+        return <ErrorCard errorMessage={myError.message} errorName="转让" showFooter={true}/>
     }
    
 }
