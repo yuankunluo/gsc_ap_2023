@@ -72,7 +72,7 @@ export default function CheckInCodePage(){
         <div className="w-full">
             <Card 
                 // header={header}
-                // subTitle={`请使用以上的【签到码】进行签到, 有效期 ${expireInSeconds} 秒`}
+                subTitle={`请使用以上的【签到码】进行签到, 有效期 ${expireInSeconds} 秒`}
                 title={checkInCodeData? checkInCodeData.code?.toLocaleUpperCase() : '请刷新'}>
                 <div className="grid grid-cols-1 p-4 gap-4">
 
