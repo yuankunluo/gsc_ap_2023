@@ -222,7 +222,7 @@ export async function isCheckInCodeExpired(code: string){
             FROM ${sql(checkInCodeTable)}
             LEFT JOIN
                 (
-                    SELECT id AS id2, inserted_at + INTERVAL '30 SECONDS' as exp_at
+                    SELECT id AS id2, inserted_at + INTERVAL '120 SECONDS' as exp_at
                     FROM ${sql(checkInCodeTable)}
                 ) AS t2
             ON id = id2
