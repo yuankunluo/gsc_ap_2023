@@ -7,6 +7,8 @@ import { ProgressBar } from 'primereact/progressbar';
 
 export function CheckInCard(props: {
     data: CheckInData
+    title?: string
+    subTitle?: string
 }){
 
 
@@ -21,8 +23,8 @@ export function CheckInCard(props: {
     return <div className="grid grid-cols-1">
     <Card
         header={header}
-        title="GSC CHINA 2023 年会签到卡"
-        subTitle="欢迎您出席！请出示此卡给工作人员"
+        title={ props.title? props.title : `GSC CHINA 2023 年会`}
+        subTitle={props.subTitle? props.subTitle:  "欢迎您出席！请出示此卡给工作人员"}
         >
             <div>
                 <ul>

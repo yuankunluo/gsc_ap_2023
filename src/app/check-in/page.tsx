@@ -33,17 +33,14 @@ export default function CheckInPage(){
 
 
     const goCheckIn = (data: MyCheckInData) => {
-        console.log(data)
         // router.push(`/check-in/${myCode.myCode}`)
         try{
             startTransition(()=>{
                 handleCheckIn(data.myCode, data.checkInCode).then(
                     (data) => {
-                        console.log(data)
                         setCheckInResponse(data)
                     }
                 ).catch((error) => {
-                    console.error(error)
                     toast.current?.show({
                         severity:'error', 
                         summary: 'ERROR', 
@@ -102,14 +99,16 @@ export default function CheckInPage(){
         <>
         <Toast ref={toast} />
         <div className="grid grid-cols-1 gap-4 p-4">
-            <h1>请输入你的
+           
+
+            <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 gap-4 p-4'>
+            
+                <h1>请输入你的
                         <Chip label='入场码(?)' onClick={(e)=>{openHelper()}}/>
                         和
                         <Chip label='签到码(?)' onClick={(e)=>{openHelperCheckInCode()}}/>
                         然后点击签。</h1>
 
-            <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 gap-4 p-4'>
-            
                 <Controller 
                     name="myCode"
                     control={control}
@@ -195,9 +194,6 @@ export default function CheckInPage(){
                     } />
 
                 <Button 
-                        onClick={()=>{
-                            router.back()
-                        }}
                         disabled={isPending}
                         severity={isValid? 'success': 'warning'}
                         label={isPending ? '签到中...' : '立即签到' }
@@ -217,7 +213,7 @@ export default function CheckInPage(){
         <ConfirmDialog />
 
        <Dialog header="签到成功" visible={checkInResponse?.checkInData != undefined} style={{ width: '95vw' }} onHide={()=>{setCheckInResponse(undefined)}}>
-            { checkInResponse?.checkInData && <CheckInCard data={checkInResponse?.checkInData} />}
+            { checkInResponse?.checkInData && <CheckInCard title='签到卡' data={checkInResponse?.checkInData} />}
         </Dialog>
 
         <Dialog header="签到失败" visible={checkInResponse?.errorMessage != undefined } style={{ width: '95vw' }} onHide={() => {setCheckInResponse(undefined)}}>
