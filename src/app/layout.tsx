@@ -1,9 +1,10 @@
-import { Suspense } from 'react'
 import Footer from './component/footer'
 import { Header } from './component/header'
 import './globals.css'
+import "primereact/resources/themes/lara-light-indigo/theme.css";     
+import "primereact/resources/primereact.min.css";    
+import 'primeicons/primeicons.css';
 import { Inter } from 'next/font/google'
-import Error from './check-in/[code]/error'
 
 const inter = Inter({ subsets: ['latin'] })
 

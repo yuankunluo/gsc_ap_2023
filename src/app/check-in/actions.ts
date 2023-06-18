@@ -41,7 +41,7 @@ export async function handleCheckIn(code: string, checkInCode: string){
             throw new CheckInError("我们查到多条坐席属于你，请联系组委会成员确认。")
         }
 
- 
+        
         const checkInCodeRecords = await sql`
             SELECT code FROM ${sql(checkInCodeTable)}
             WHERE code = ${checkInCode}
@@ -51,6 +51,11 @@ export async function handleCheckIn(code: string, checkInCode: string){
 
         if (checkInCodeRecords.length == 0){
             throw new CheckInError("抱歉， 你的签到码错误。")
+        }
+
+        if (checkInRecords[0].check_in){
+            response.checkInData = checkInRecords[0]
+            return response
         }
 
 

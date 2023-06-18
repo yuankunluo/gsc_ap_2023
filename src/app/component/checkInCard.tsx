@@ -18,7 +18,7 @@ export function CheckInCard(props: {
         </div>
     );
 
-    return <div className="grid grid-cols-1 p-4">
+    return <div className="grid grid-cols-1">
     <Card
         header={header}
         title="GSC CHINA 2023 年会签到卡"
