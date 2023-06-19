@@ -4,32 +4,18 @@ import { Column } from "primereact/column";
 import { CheckInData } from "../actions";
 import { DataTable } from 'primereact/datatable';
 import { Button } from "primereact/button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { convertToDateString } from "@/utils";
 import { useRouter } from "next/navigation";
 
 export function DataTableComp(props: {data: CheckInData[]}){
 
-    const router = useRouter()    
-
-    const formatDate = (value: Date) => {
-        return `${value}`
-    }
+    const router = useRouter()
+    const dataTable = useRef<DataTable<CheckInData[]>>(null);
 
     const [globalFilterValue1, setGlobalFilterValue1] = useState('');
 
-    const dateTemplate = (rowData:CheckInData)=>{
-        return <p>rowData.name</p>
-    }
-
-    const clearFilter1 = () => {
-        initFilters1();
-    }
-
-    const initFilters1 = () => {
-        setGlobalFilterValue1('');
-    }
 
     const onGlobalFilterChange1 = (value:string) => {
         
@@ -38,34 +24,51 @@ export function DataTableComp(props: {data: CheckInData[]}){
 
     const renderHeader1 = () => {
         return (
-            <div className="flex flex-row justify-end gap-4">
-                <Button 
+            <div className="grid grid-cols-2 justify-items-stretch gap-4">
+                <Button
+                    className="justify-self-start"
                     type="button" 
                     label="返回"
                     severity="info"
                     onClick={()=> router.back()} />
 
-                <Button 
-                    type="button" 
-                    icon="pi pi-filter-slash" 
-                    label="清除搜索" 
-                    className="p-button-outlined" onClick={clearFilter1} />
-                <span className="p-input-icon-left">
-                    <i className="pi pi-search" />
-                    <InputText 
-                        value={globalFilterValue1} 
-                        onChange={e => onGlobalFilterChange1(e.target.value)} 
-                        placeholder="任意字符搜索" />
-                </span>
+                <div className="justify-self-end">
+                    
+                    <span className="p-input-icon-left">
+                        <i className="pi pi-search" />
+                        <InputText 
+                            value={globalFilterValue1} 
+                            onChange={e => onGlobalFilterChange1(e.target.value)} 
+                            placeholder="任意字符搜索" />
+                    </span>
+
+
+                    <Button 
+                        className="m-4"
+                        type="button" 
+                        icon="pi pi-file" 
+                        label="下载" 
+                        severity="info"
+                        data-pr-tooltip="CSV"
+                        onClick={()=>{exportCSV()}} />
+                </div>
+                
             </div>
         )
     }
 
     const header1 = renderHeader1();
 
+
+    const exportCSV = (selectionOnly:boolean = false) => {
+        dataTable.current?.exportCSV({selectionOnly});
+    };
+
     return (
         <div className="fixed top-32 bottom-36 left-0 right-0 bg-white w-full">
-            <DataTable value={props.data}
+            <DataTable 
+                value={props.data}
+                ref={dataTable}
                 scrollable
                 stripedRows 
                 showGridlines
@@ -75,7 +78,8 @@ export function DataTableComp(props: {data: CheckInData[]}){
                 globalFilterFields={['code', 'table', 'name']}
                 globalFilterMatchMode="contains"
                 globalFilter={globalFilterValue1}
-                header={header1} emptyMessage="No Record found."
+                header={header1} 
+                emptyMessage="No Record found."
                 >
                 <Column field="id" header="ID" sortable filter ></Column>
                 <Column field="code" header="Code" sortable filter ></Column>
