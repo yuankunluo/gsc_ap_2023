@@ -83,94 +83,93 @@ export default function SwitchPage(){
             title="转让坐席给他人"
             subTitle="将爱传递给其他人！"
             >
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className='grid grid-cols-1 gap-4'>
-
-                    <Controller 
-                        name="myCode"
-                        control={control}
-                        rules={{
-                            required: true, 
-                            pattern:{
-                                value: /^[A-z|0-9]{6,6}$/,
-                                message: "入场码是一个6位的数字和字母的组合字符串, 例如 【TX887J】"
-                            }
-                            
-                        }}
-                        render={
-                            ({ field , fieldState}) => (
-                                <div className='grid grid-cols-1 gap-4'>
-                                    <div className="p-inputgroup">
-                                        <span className="p-inputgroup-addon">
-                                            <i className="pi pi-heart"></i>
-                                        </span>
+                
+                <div className='grid grid-cols-1 gap-4'>
+                    <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 gap-4'>
+                        <Controller 
+                            name="myCode"
+                            control={control}
+                            rules={{
+                                required: true, 
+                                pattern:{
+                                    value: /^[A-z|0-9]{6,6}$/,
+                                    message: "入场码是一个6位的数字和字母的组合字符串, 例如 【TX887J】"
+                                }
+                                
+                            }}
+                            render={
+                                ({ field , fieldState}) => (
+                                    <div className='grid grid-cols-1 gap-4'>
+                                        <div className="p-inputgroup">
+                                            <span className="p-inputgroup-addon">
+                                                <i className="pi pi-heart"></i>
+                                            </span>
+                                        
+                                            <InputText 
+                                                required
+                                                placeholder="你的入场码" 
+                                                type="text"
+                                                {...field}
+                                                />
+                                        </div>
                                     
-                                        <InputText 
-                                            required
-                                            placeholder="你的入场码" 
-                                            type="text"
-                                            {...field}
-                                            />
-                                    </div>
-                                
-                                    {
-                                        errors.myCode?.type === 'pattern' && 
-                                        <Message severity="error" text={errors.myCode?.message} />
-                                    }
+                                        {
+                                            errors.myCode?.type === 'pattern' && 
+                                            <Message severity="error" text={errors.myCode?.message} />
+                                        }
 
-                                    {
-                                        errors.myCode?.type === 'required' && 
-                                        <Message severity="error" text="请输入入场码！" />
-                                    }
-                                
-
-                            </div>
-                        )} />
-
-
-                    <Controller 
-                        name="hisCode"
-                        control={control}
-                        rules={{
-                            required: true, 
-                            pattern:{
-                                value: /^[A-z|0-9]{6,6}$/,
-                                message: "入场码是一个6位的数字和字母的组合字符串, 例如 【TX887J】"
-                            }
-                            
-                        }}
-                        render={
-                            ({ field , fieldState}) => (
-                                <div className='grid grid-cols-1 gap-4'>
-                                    <div className="p-inputgroup">
-                                        <span className="p-inputgroup-addon">
-                                            <i className="pi pi-heart-fill"></i>
-                                        </span>
+                                        {
+                                            errors.myCode?.type === 'required' && 
+                                            <Message severity="error" text="请输入入场码！" />
+                                        }
                                     
-                                        <InputText 
-                                            required
-                                            placeholder="他的入场码" 
-                                            type="text"
-                                            {...field}
-                                            />
-                                    </div>
+
+                                </div>
+                            )} />
+
+
+                        <Controller 
+                            name="hisCode"
+                            control={control}
+                            rules={{
+                                required: true, 
+                                pattern:{
+                                    value: /^[A-z|0-9]{6,6}$/,
+                                    message: "入场码是一个6位的数字和字母的组合字符串, 例如 【TX887J】"
+                                }
                                 
-                                    {
-                                        errors.hisCode?.type === 'pattern' && 
-                                        <Message severity="error" text={errors.hisCode?.message} />
-                                    }
+                            }}
+                            render={
+                                ({ field , fieldState}) => (
+                                    <div className='grid grid-cols-1 gap-4'>
+                                        <div className="p-inputgroup">
+                                            <span className="p-inputgroup-addon">
+                                                <i className="pi pi-heart-fill"></i>
+                                            </span>
+                                        
+                                            <InputText 
+                                                required
+                                                placeholder="他的入场码" 
+                                                type="text"
+                                                {...field}
+                                                />
+                                        </div>
+                                    
+                                        {
+                                            errors.hisCode?.type === 'pattern' && 
+                                            <Message severity="error" text={errors.hisCode?.message} />
+                                        }
 
-                                    {
-                                        errors.hisCode?.type === 'required' && 
-                                        <Message severity="error" text="请输入入场码！" />
-                                    }
-                                
+                                        {
+                                            errors.hisCode?.type === 'required' && 
+                                            <Message severity="error" text="请输入入场码！" />
+                                        }
+                                    
 
-                            </div>
-                        )} />
+                                </div>
+                            )} />
 
-                        <div className='grid grid-cols-2 gap-4'>
-                            <Button onClick={()=>router.back()}>返回</Button>
+                        <div className='grid grid-cols-1 gap-4'>
                             <Button
                                 disabled={isPending}
                                 severity={isValid? 'success': 'warning'}
@@ -181,13 +180,13 @@ export default function SwitchPage(){
                                 >
                             </Button>
                         </div>
-                        
+                    </form>
+
+
+                    <div className='grid grid-cols-1 gap-4'>
+                        <Button onClick={()=>router.back()}>返回</Button>
                     </div>
-
-
-                    
-                </form>
-                
+                </div>
                     
    
             </Card>
