@@ -23,6 +23,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/lib/db.js", "src/app/admin/data-list/loading.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/lib/db.js", "src/app/admin/data-list/loading.jsx", "src/app/menu/menu.mdx"],
   "exclude": ["node_modules"]
 }
