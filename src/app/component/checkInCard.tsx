@@ -29,7 +29,7 @@ export function CheckInCard(props: {
         >
             <div>
                 <ul>
-                    <li><span className="w-3/12	">邀请码：</span><Chip label={props.data.code.toUpperCase()}/></li>
+                    <li><span className="w-3/12	">入场码：</span><Chip label={props.data.code.toUpperCase()}/></li>
                     <li><span className="w-3/12	">昵称：</span>{props.data.name?.toLocaleUpperCase()}</li>
                     <li><span className="w-3/12	">桌号：</span><Chip label={props.data.table_nr.toLocaleUpperCase()} /></li>
                     <li><span>座位号：</span>{props.data.seat_nr?.toLocaleUpperCase()}</li>

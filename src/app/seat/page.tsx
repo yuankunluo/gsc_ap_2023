@@ -14,6 +14,8 @@ import { Dialog } from "primereact/dialog";
 import { CheckInCard } from "../component/checkInCard";
 import ErrorCard from "../component/errorCard";
 import { Toast } from "primereact/toast";
+import ImageComponent from "../component/imageComponent";
+
 
 interface SeatRequestData {
     myCode: string
@@ -38,6 +40,7 @@ export default function SeatPage(){
     const [isPending, startTransition] = useTransition()
     const [checkInResponse, setCheckInResponse] = useState<CheckSeatResponse>()
     const toast = useRef<Toast>(null);
+    const [seatPlanVisible, setSeatPlanVisible] = useState(false)
 
     const onSubmit: SubmitHandler<SeatRequestData> = (data: SeatRequestData) =>{
         checkSeat(data)
@@ -70,7 +73,8 @@ export default function SeatPage(){
             
 
             <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 gap-4 p-4'>
-                <h1>请输入你的<Chip label='入场码(?)' onClick={(e)=>{openHelper()}}/>然后点击查询查看坐席。</h1>
+                <h1>请输入你的<Chip label='入场码(?)' onClick={(e)=>{openHelper()}}/>然后点击查询查看
+                <Chip label="坐席" onClick={(e)=>{setSeatPlanVisible(true)}} />。</h1>
 
                 <Controller 
                         name="myCode"
@@ -138,6 +142,10 @@ export default function SeatPage(){
 
         <Dialog header="查询失败" visible={checkInResponse?.errorMessage != undefined } style={{ width: '95vw' }} onHide={() => {setCheckInResponse(undefined)}}>
             { checkInResponse?.errorMessage && <ErrorCard errorName='坐席错误' errorMessage={checkInResponse?.errorMessage} showFooter={false}/> }
+        </Dialog>
+
+        <Dialog header="坐席分布" visible={seatPlanVisible} style={{ width: '95vw' }} onHide={() => {setSeatPlanVisible(false)}}>
+            <ImageComponent url="/hotel_seat.png" alt="琶洲香格里拉酒店宴会厅平面图" />
         </Dialog>
         </>
     )

@@ -184,7 +184,7 @@ export default function SwitchPage(){
 
 
                     <div className='grid grid-cols-1 gap-4'>
-                        <Button onClick={()=>router.back()}>返回</Button>
+                        <Button onClick={()=>router.back()} label='返回'></Button>
                     </div>
                 </div>
                     
