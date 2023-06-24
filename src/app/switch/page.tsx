@@ -81,7 +81,7 @@ export default function SwitchPage(){
             <Card
             header={header}
             title="转让坐席给他人"
-            subTitle="将爱传递给其他人！"
+            subTitle="将爱传递给其他人！2023年6月24日零点启，坐席转让功能关闭。"
             >
                 
                 <div className='grid grid-cols-1 gap-4'>
@@ -171,7 +171,7 @@ export default function SwitchPage(){
 
                         <div className='grid grid-cols-1 gap-4'>
                             <Button
-                                disabled={isPending}
+                                disabled={true}
                                 severity={isValid? 'success': 'warning'}
                                 icon="pi pi-check" 
                                 iconPos='right'
@@ -184,7 +184,7 @@ export default function SwitchPage(){
 
 
                     <div className='grid grid-cols-1 gap-4'>
-                        <Button onClick={()=>router.back()} label='返回'></Button>
+                        <Button  onClick={()=>router.back()} label='返回'></Button>
                     </div>
                 </div>
                     

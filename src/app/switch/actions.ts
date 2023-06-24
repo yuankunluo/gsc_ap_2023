@@ -19,12 +19,16 @@ export interface SwitchResponse {
 
 export async function handleSwitch(myCode: string, hisCode: string){
 
+
+
     myCode = myCode.toLocaleLowerCase()
     hisCode = hisCode.toLocaleLowerCase()
 
     const response: SwitchResponse = {}
 
     try {
+
+        throw new SwitchError("已经过了允许时段 2023年6月24日零点后，坐席转让不再被允许执行。")
 
         if (myCode == hisCode){
             throw new SwitchError("不能自己转让给自己！")
