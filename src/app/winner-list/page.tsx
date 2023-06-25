@@ -17,13 +17,13 @@ import { WinnerListData } from "../admin/actions";
 
 
 export interface WinnerAddressData {
-    name: string
-    address: string
+    name: string 
+    address: string 
     phone: number
-    code: string
-    prize: string
-    staff_id: string
-    hash_code?: string
+    code: string 
+    prize: string 
+    staff_id: string 
+    hash_code?: string 
 }
 
 type FormControlName = 'name'| 'phone' | 'address' | 'code' | 'staff_id'
@@ -257,14 +257,15 @@ export default function WinnerListPage(){
 
                         {
                             formConfig.filter(f => f.type =='InputText').map(config => 
-                                <Controller 
+                                <Controller
+                                key={config.controlName} 
                                 name={config.controlName}
                                 control={control}
                                 rules={{
                                     required: true, 
                                 }}
                                 render={
-                                    ({ field }) => (
+                                    ({ field:{onChange} }) => (
                                         <div className='grid grid-cols-1 gap-4'>
                                             <div className="p-inputgroup">
                                                 <span className="p-inputgroup-addon">
@@ -275,7 +276,6 @@ export default function WinnerListPage(){
                                                     disabled={isSubmitting}
                                                     required
                                                     placeholder={config.title}
-                                                    {...field}
                                                     />
                                             </div>
                                         
@@ -311,7 +311,7 @@ export default function WinnerListPage(){
                                     )
                                 } />
                         
-                        <Button disabled={isSubmitting} type="sumbit" label={isSubmitting? "提交中..." : "提交"} />
+                        <Button disabled={isSubmitting} type="submit" label={isSubmitting? "提交中..." : "提交"} />
                     </div>
                 </form>
                 
