@@ -44,6 +44,7 @@ export default function AdminPage(){
                     <Button severity='info' onClick={()=>goToList("check-in-code")} label='生成签到二维码' />
                     <Button severity='danger' onClick={()=>goToList("upload")} label='上传文件' />
                     <Button severity='success' onClick={()=>goToList("data-list")} label='查阅签到记录' />
+                    <Button severity='success' onClick={()=>goToList("winner-list")} label='查阅领奖记录' />
                     <Button severity='warning' onClick={()=>{logOut()}} label="退出登录" />
                     <Button severity='info' onClick={()=>{router.back()}} label="返回" />
                 </div>

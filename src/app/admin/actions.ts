@@ -20,6 +20,11 @@ export interface WinnerListData {
     code: string
     prize: string
     hash_code: string
+    update_at: string
+    inserted_at: string
+    address: string
+    phone: string
+    name: string
 }
 
 export interface PartyCodeData {
@@ -121,6 +126,7 @@ export async function create_winner_list_table(){
             hash_code TEXT NOT NULL,
             inserted_at TIMESTAMP with time zone default timezone('utc'::text, now()) NOT NULL,
             update_at TIMESTAMP with time zone default timezone('utc'::text, null),
+            name TEXT,
             address TEXT,
             phone TEXT
         )
@@ -322,6 +328,12 @@ export async function isCheckInCodeExpired(code: string){
 
 }
 
+export async function getWinnerListData(){
+    return await sql<WinnerListData[]>`
+    SELECT *
+    FROM ${sql(winnerListTable)}
+    `
+}
 
 export async function generateCheckInCode(){
     const checkInCodeResponse: CheckInCodeResponse = {}

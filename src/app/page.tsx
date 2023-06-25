@@ -3,25 +3,30 @@ import Link from "next/link";
 export default function Home() {
 
   const menus = [
+    // {
+    //   title: "我的坐席",
+    //   supTitle: "My Seat.",
+    //   route: "/seat"
+    // },
+    // {
+    //   title: "签到",
+    //   supTitle: "Check In.",
+    //   route: "/check-in"
+    // },
+    // {
+    //   title: "转让坐席",
+    //   supTitle: "Transfer.",
+    //   route: "/switch"
+    // },
+    // {
+    //   title: "节目单",
+    //   supTitle: "Playlist.",
+    //   route: "/menu"
+    // },
     {
-      title: "我的坐席",
-      supTitle: "My Seat.",
-      route: "/seat"
-    },
-    {
-      title: "签到",
-      supTitle: "Check In.",
-      route: "/check-in"
-    },
-    {
-      title: "转让坐席",
-      supTitle: "Transfer.",
-      route: "/switch"
-    },
-    {
-      title: "节目单",
-      supTitle: "Playlist.",
-      route: "/menu"
+      title: "获奖者地址收集",
+      supTitle: "Winner's Address",
+      route: "/winner-list"
     },
     {
       title: "管理",
