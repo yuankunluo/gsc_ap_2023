@@ -13,6 +13,7 @@ import { Dialog } from "primereact/dialog";
 import { Chip } from "primereact/chip";
 import { Divider } from "primereact/divider";
 import { Message } from "primereact/message";
+import { useRouter } from "next/navigation";
 
 
 export interface WinnerAddressData {
@@ -76,6 +77,7 @@ export default function WinnerListPage(){
     const [visibleSubmit, setVisibleSubmit] = useState(false)
     const [isSubmitting, startSubmitTransaction] = useTransition()
     const [response, setResponse] = useState<HandleSubmitResponse>()
+    const router = useRouter()
 
     useEffect(()=>{
         startFetchingPrizeListTransaction(()=>{
@@ -316,7 +318,7 @@ export default function WinnerListPage(){
                     </div>
                 </form>
                 
-                <Button severity="danger"  label="返回" />
+                <Button severity="danger" onClick={()=>{router.back()}}  label="返回" />
             </div>
 
         
