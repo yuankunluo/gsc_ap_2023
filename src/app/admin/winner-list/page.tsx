@@ -26,10 +26,6 @@ export default function WinnerListPage(){
     };
 
 
-    useEffect(()=>{
-        fetchData()
-    },[])
-
     const fetchData = ()=>{
         startFetching(()=>{
             getWinnerListData().then(data=>{
