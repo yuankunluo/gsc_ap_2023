@@ -9,7 +9,7 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'GSC China Annual Part 2023',
+  title: 'GSC China Annual Party 2023',
   description: 'Web Site for GSC China Annual Part 2023',
 }
 

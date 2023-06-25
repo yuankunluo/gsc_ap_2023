@@ -27,8 +27,8 @@ export default function WinnerListPage(){
 
 
     useEffect(()=>{
-        
-    },[])
+        fetchData()
+    },[winnerData])
 
     const fetchData = ()=>{
         startFetching(()=>{
@@ -43,7 +43,7 @@ export default function WinnerListPage(){
 
     const renderHeader1 = () => {
         return (
-            <div className="grid grid-cols-2 justify-items-stretch gap-4">
+            <div className="grid sm:grid-cols-1 gird-cols-2 justify-items-stretch gap-4">
                 <Button
                     className="justify-self-start"
                     type="button" 
@@ -51,7 +51,7 @@ export default function WinnerListPage(){
                     severity="info"
                     onClick={()=> router.back()} />
 
-                <div className="flex gap-4 justify-self-end">
+                <div className="flex flex-wrap gap-4 justify-self-end">
                     
                     <span className="p-input-icon-left">
                         <i className="pi pi-search" />
