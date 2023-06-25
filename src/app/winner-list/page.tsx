@@ -166,8 +166,8 @@ export default function WinnerListPage(){
 
         <Dialog header="确定提交？" visible={visibleSubmit} style={{ width: '95vw' }} onHide={() => {setVisibleSubmit(false)}}>
             <div className="grid grid-cols gap-2">
-            <h1>请再仔细核对一遍你的收货信息，提交之后不能再就行修改。请你认真操作！</h1>
-            <p>请放心，我们会严格保留你的个人信息，年会结束后销毁。你的员工号后四位只为用来计算HASH， 不会被保存！</p>
+            <h1>请再仔细核对一遍你的收货信息，提交之后不能再修改。请你认真操作！</h1>
+            <p>请放心，我们会严格保留你的个人信息。你的员工号后四位只为用来计算HASH， 不会被保存！所有数据将为在礼物派送结束后销毁。</p>
 
             <Divider />
             <p><Chip label="奖项:" />{getValues()['prize']}</p>
