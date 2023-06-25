@@ -13,7 +13,6 @@ import { Dialog } from "primereact/dialog";
 import { Chip } from "primereact/chip";
 import { Divider } from "primereact/divider";
 import { Message } from "primereact/message";
-import { WinnerListData } from "../admin/actions";
 
 
 export interface WinnerAddressData {
@@ -191,7 +190,7 @@ export default function WinnerListPage(){
             <Card
             // header={header}
             title="恭喜你获奖！"
-            subTitle="请在一下表格中填入你的收货信息，注意，你只能填写一次！请谨慎操作。"
+            subTitle="请在以下表格中填入你的收货信息，注意，你只能填写一次！请谨慎操作。"
         >
             <div className="grid grid-cols-1 gap-4">
                 <form onSubmit={handleSubmit(onSubmit)}>
