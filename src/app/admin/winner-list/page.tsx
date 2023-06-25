@@ -28,7 +28,7 @@ export default function WinnerListPage(){
 
     useEffect(()=>{
         fetchData()
-    },[winnerData])
+    },[])
 
     const fetchData = ()=>{
         startFetching(()=>{
