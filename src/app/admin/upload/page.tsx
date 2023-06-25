@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState, useTransition } from "react"
-import { CheckInData, PartyCodeData, UploadFileType, handleUploadCheckIn, handleUploadPartyCode } from "../actions";
+import { CheckInData, PartyCodeData, UploadFileType, WinnerListData, handleUploadCheckIn, handleUploadPartyCode, handleUploadWinnerList } from "../actions";
 import Papa from 'papaparse';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -130,6 +130,58 @@ export default function Upload(){
         })
     
    }
+
+
+   const uploadWinnerListData = (csv: string, password: string) => {
+
+    const parseErrors : string[] = []
+    const {data, errors, meta} = Papa.parse<WinnerListData>(csv, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: (value) => value.toLocaleLowerCase(),
+        transform: (value) => value.toLocaleLowerCase()
+    })
+
+    console.log('parse WinnerListData', data.length)
+
+
+    const requiredFileds = ['code','prize','hash_code']
+
+    const founded = requiredFileds.map((f) => meta.fields?.includes(f)).reduce((a,b) => a && b, true)
+
+    if (!founded){
+        parseErrors.push("required filed missing: code, table_nr")
+    }
+
+    if (errors.length > 0){
+        errors.forEach(e => parseErrors.push(e.message))
+    } 
+
+    // check duplication
+    const codeList = data.map(d => d.hash_code)
+    const codeSet = new Set(codeList)
+
+    if (codeList.length != codeSet.size){
+        parseErrors.push('Found duplicated code')
+    }
+
+    if (parseErrors.length != 0){
+        setDataErrors(parseErrors)
+        return
+    }
+    
+    startUploadTransition(() => {
+        
+        handleUploadWinnerList(data, password);
+        
+        toast.current?.show({
+            severity:'success',
+            detail: 'Upload Successfully'
+        })
+        setDataErrors([])
+    })
+
+}
         
         
 
@@ -140,7 +192,10 @@ export default function Upload(){
             text => {
                 if (data.dataType == 'CheckIn'){
                     uploadChekInData(text, data.password)
-                } else {
+                } else if (data.dataType == 'WinnerList'){
+                    uploadWinnerListData(text, data.password)
+                } 
+                else {
                     uploadPartyCodeData(text, data.password)
                 }
             }
@@ -178,7 +233,7 @@ export default function Upload(){
                                     required
                                     {...field}
                                     id={field.name} 
-                                    options={['CheckIn' , 'PartyCode']} />
+                                    options={['CheckIn' , 'PartyCode', 'WinnerList']} />
                                 )} />
 
                         

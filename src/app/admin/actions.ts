@@ -1,11 +1,11 @@
 'use server'
 
-import sql, { checkInCodeTable, checkInTabble , partyCodeTable} from "@/lib/db"
+import sql, { checkInCodeTable, checkInTabble , partyCodeTable, winnerListTable} from "@/lib/db"
 import { getRandom, makeid } from "@/utils"
 import { PostgresError } from "postgres"
 
 
-export type UploadFileType = 'CheckIn' | 'PartyCode'
+export type UploadFileType = 'CheckIn' | 'PartyCode' | 'WinnerList'
 
 
 interface DbRandomSelection {
@@ -13,6 +13,13 @@ interface DbRandomSelection {
     min_id: string
     max_id: string
     id_span: number
+}
+
+
+export interface WinnerListData {
+    code: string
+    prize: string
+    hash_code: string
 }
 
 export interface PartyCodeData {
@@ -85,6 +92,57 @@ export async function create_party_code_table(){
     } catch(error){
         console.error(error)
         throw error
+    }
+}
+
+export async function create_winner_list_table(){
+    try{
+
+        const tableName = '' + `${winnerListTable}`
+
+        const tableExist = await sql`
+                SELECT EXISTS (
+                SELECT FROM information_schema.tables 
+                WHERE
+                table_name  = ${tableName}
+                );
+        `
+
+        if (tableExist[0]['exists']){
+            await sql`
+                DROP TABLE  ${sql(winnerListTable)}
+            `
+            console.debug("drop", tableName)
+        } 
+
+        const createWinnerListTable = await sql`CREATE TABLE ${sql(winnerListTable)} (
+            code TEXT primary key NOT NULL,
+            prize TEXT NOT NULL,
+            hash_code TEXT NOT NULL,
+            inserted_at TIMESTAMP with time zone default timezone('utc'::text, now()) NOT NULL,
+            update_at TIMESTAMP with time zone default timezone('utc'::text, null),
+            address TEXT,
+            phone TEXT
+        )
+        `
+        console.debug("created: ", createWinnerListTable)
+
+    } catch(error){
+        console.error(error)
+        throw error
+    }
+}
+
+export async function insertWinnerList(winnerListData: WinnerListData[]){
+
+    try {
+       
+        const insertPartyCode =  await sql`
+        INSERT INTO ${sql(winnerListTable)} ${sql(winnerListData)}
+        `
+        return {"ok":200}
+    } catch(error) {
+        throw error;
     }
 }
 
@@ -201,6 +259,23 @@ export async function handleUploadPartyCode(uploadData: PartyCodeData[],  passwo
     const insertResult = await insertPartyCodeData(uploadData)
     console.debug("insert", insertResult)
 }
+
+
+export async function handleUploadWinnerList(uploadData: WinnerListData[],  password:string){
+    console.debug('password', password)
+    // console.log(data)
+
+    const masterPassword = `${process.env.MASTER_PASSWORD}`
+
+    if (password !== masterPassword){
+        throw new Error("Password invalid")
+    }
+
+    await create_winner_list_table()
+    const insertResult = await insertWinnerList(uploadData)
+    console.debug("insert", insertResult)
+}
+
 
 
 export async function getAllData(){
