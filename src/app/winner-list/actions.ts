@@ -66,7 +66,7 @@ export async function handleUploadAddress(data: WinnerAddressData){
 
             const update = await sql`
             UPDATE ${sql(winnerListTable)}
-            SET name=${data.name}, phone = ${data.phone}, address = ${data.address}, update_at = timezone('utc'::text, now()),
+            SET name=${data.name}, phone = ${data.phone}, address = ${data.address}, update_at = timezone('utc'::text, now())
             WHERE hash_code = ${hash_code}
             `
             const result = await sql<WinnerListData[]>`
