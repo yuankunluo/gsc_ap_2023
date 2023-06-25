@@ -19,7 +19,7 @@ import { WinnerListData } from "../admin/actions";
 export interface WinnerAddressData {
     name: string 
     address: string 
-    phone: number
+    phone: string
     code: string 
     prize: string 
     staff_id: string 
@@ -265,7 +265,7 @@ export default function WinnerListPage(){
                                     required: true, 
                                 }}
                                 render={
-                                    ({ field:{onChange} }) => (
+                                    ({ field}) => (
                                         <div className='grid grid-cols-1 gap-4'>
                                             <div className="p-inputgroup">
                                                 <span className="p-inputgroup-addon">
@@ -276,6 +276,8 @@ export default function WinnerListPage(){
                                                     disabled={isSubmitting}
                                                     required
                                                     placeholder={config.title}
+                                                    type="text"
+                                                    {...field}
                                                     />
                                             </div>
                                         
