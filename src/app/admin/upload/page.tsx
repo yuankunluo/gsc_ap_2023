@@ -138,8 +138,7 @@ export default function Upload(){
     const {data, errors, meta} = Papa.parse<WinnerListData>(csv, {
         header: true,
         skipEmptyLines: true,
-        transformHeader: (value) => value.toLocaleLowerCase(),
-        transform: (value) => value.toLocaleLowerCase()
+        transformHeader: (value) => value.toLocaleLowerCase()
     })
 
     console.log('parse WinnerListData', data.length)

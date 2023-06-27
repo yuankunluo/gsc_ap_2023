@@ -49,7 +49,7 @@ class AddressError extends Error {
 
 export async function handleUploadAddress(data: WinnerAddressData){
     const response: HandleSubmitResponse = {}
-
+    console.log("data", data)
     const hash_code = sha256(`${data.staff_id}${data.prize}${data.code.toUpperCase()}`)
     console.log(hash_code)
     try {
