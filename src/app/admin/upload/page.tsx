@@ -138,10 +138,9 @@ export default function Upload(){
     const {data, errors, meta} = Papa.parse<WinnerListData>(csv, {
         header: true,
         skipEmptyLines: true,
-        transformHeader: (value) => value.toLocaleLowerCase()
     })
 
-    console.log('parse WinnerListData', data.length)
+    console.log('parse WinnerListData', data)
 
 
     const requiredFileds = ['code','prize','hash_code']
@@ -157,7 +156,7 @@ export default function Upload(){
     } 
 
     // check duplication
-    const codeList = data.map(d => d.hash_code)
+    const codeList = data.map(d => d.code)
     const codeSet = new Set(codeList)
 
     if (codeList.length != codeSet.size){
