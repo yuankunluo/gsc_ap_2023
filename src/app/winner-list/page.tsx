@@ -194,7 +194,7 @@ export default function WinnerListPage(){
             title="恭喜你获奖！"
             subTitle="请在以下表格中填入你的收货信息，注意，你只能填写一次！请谨慎操作。"
         >
-            <div className="grid grid-cols-1 gap-4">
+            {/* <div className="grid grid-cols-1 gap-4">
                 <form onSubmit={handleSubmit(onSubmit)}>
 
                 <div className="grid grid-cols-1 gap-4">
@@ -319,8 +319,9 @@ export default function WinnerListPage(){
                 </form>
                 
                 <Button severity="danger" onClick={()=>{router.back()}}  label="返回" />
-            </div>
+            </div> */}
 
+            <h1>Thank you for your attention, this system is already shutdown. See you in next year!</h1>
         
             
         </Card>
