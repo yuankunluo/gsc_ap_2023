@@ -24,15 +24,15 @@ export default function Home() {
     //   route: "/menu"
     // },
     {
-      title: "获奖者地址收集",
-      supTitle: "Winner's Address",
-      route: "/winner-list"
+      title: "DgLovin空间",
+      supTitle: "Welcome",
+      route: "/"
     },
-    {
-      title: "管理",
-      supTitle: "Admin.",
-      route: "/admin"
-    }
+    // {
+    //   title: "管理",
+    //   supTitle: "Admin.",
+    //   route: "/admin"
+    // }
   ]
   
 
