@@ -19,7 +19,7 @@ export default function Home() {
       </div>
 
       <div className="fixed bottom-10">
-            <a href='https://beian.miit.gov.cn' target='blank'>粤ICP备2023088361号</a>
+            <a href='https://beian.miit.gov.cn' target='blank'>粤ICP备2023088361号-1</a>
       </div>
     </main>
   )
